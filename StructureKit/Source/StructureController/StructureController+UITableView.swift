@@ -361,6 +361,34 @@ extension StructureController: UITableViewDelegate {
         }
     }
     
+    // MARK: - Highlighting
+    
+    internal func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        if tableViewDelegate?.responds(to: #selector(tableView(_:shouldHighlightRowAt:))) == true, let shouldHighlight = tableViewDelegate?.tableView?(tableView, shouldHighlightRowAt: indexPath) {
+            return shouldHighlight
+        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
+            return object.shouldHighlight
+        } else {
+            return true
+        }
+    }
+
+    internal func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+        if tableViewDelegate?.responds(to: #selector(tableView(_:didHighlightRowAt:))) == true {
+            tableViewDelegate?.tableView?(tableView, didHighlightRowAt: indexPath)
+        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
+            object.didHighlight?()
+        }
+    }
+
+    internal func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+        if tableViewDelegate?.responds(to: #selector(tableView(_:didUnhighlightRowAt:))) == true {
+            tableViewDelegate?.tableView?(tableView, didUnhighlightRowAt: indexPath)
+        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
+            object.didUnhighlight?()
+        }
+    }
+
     // MARK: - Selection
     
     internal func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
