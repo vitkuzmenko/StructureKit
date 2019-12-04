@@ -24,6 +24,12 @@ final class StructureController: NSObject {
     internal weak var tableViewDelegate: UITableViewDelegate?
     
     internal weak var tableViewDataSourcePrefetching: UITableViewDataSourcePrefetching?
+    
+    // MARK: - TableViewParameters
+    
+    internal weak var collectionViewDelegate: UICollectionViewDelegate?
+    
+    internal weak var collectionViewDataSourcePrefetching: UICollectionViewDataSourcePrefetching?
         
     // MARK: - CollectionView
     
@@ -107,7 +113,7 @@ final class StructureController: NSObject {
                     tableView.reloadData()
                 }
             }
-        case .collectionView:
+        case .collectionView(let collectionView):
             break
         }
     }

@@ -31,6 +31,7 @@
 		7960B306239638E000DC71B0 /* StructureSectionHeaderFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7960B2F2239638E000DC71B0 /* StructureSectionHeaderFooter.swift */; };
 		7960B307239638E000DC71B0 /* StructureDiffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7960B2F4239638E000DC71B0 /* StructureDiffer.swift */; };
 		7960B308239638E000DC71B0 /* TableAnimationRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7960B2F5239638E000DC71B0 /* TableAnimationRule.swift */; };
+		79808B4A239836A000596A2C /* StructureController+UICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79808B49239836A000596A2C /* StructureController+UICollectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		7960B2F2239638E000DC71B0 /* StructureSectionHeaderFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructureSectionHeaderFooter.swift; sourceTree = "<group>"; };
 		7960B2F4239638E000DC71B0 /* StructureDiffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructureDiffer.swift; sourceTree = "<group>"; };
 		7960B2F5239638E000DC71B0 /* TableAnimationRule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableAnimationRule.swift; sourceTree = "<group>"; };
+		79808B49239836A000596A2C /* StructureController+UICollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "StructureController+UICollectionView.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,8 +150,8 @@
 			isa = PBXGroup;
 			children = (
 				7960B2E7239638E000DC71B0 /* Section */,
-				7960B2EA239638E000DC71B0 /* StructureController */,
 				7960B2EE239638E000DC71B0 /* Cell */,
+				7960B2EA239638E000DC71B0 /* StructureController */,
 				7960B2F1239638E000DC71B0 /* HeaderFooter */,
 				7960B2F3239638E000DC71B0 /* Extras */,
 			);
@@ -170,6 +172,7 @@
 			children = (
 				7960B2EB239638E000DC71B0 /* StructureController.swift */,
 				7960B2EC239638E000DC71B0 /* StructureController+UITableView.swift */,
+				79808B49239836A000596A2C /* StructureController+UICollectionView.swift */,
 				7960B2ED239638E000DC71B0 /* StructureController+UIScrollViewDelegate.swift */,
 			);
 			path = StructureController;
@@ -178,8 +181,8 @@
 		7960B2EE239638E000DC71B0 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				7960B2EF239638E000DC71B0 /* StructureOldItem.swift */,
 				7960B2F0239638E000DC71B0 /* Structurable.swift */,
+				7960B2EF239638E000DC71B0 /* StructureOldItem.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -291,6 +294,7 @@
 				7960B300239638E000DC71B0 /* StructureOldSection.swift in Sources */,
 				7960B305239638E000DC71B0 /* Structurable.swift in Sources */,
 				7960B2FE239638E000DC71B0 /* CitiesDataSource.swift in Sources */,
+				79808B4A239836A000596A2C /* StructureController+UICollectionView.swift in Sources */,
 				7960B304239638E000DC71B0 /* StructureOldItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

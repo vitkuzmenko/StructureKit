@@ -191,8 +191,16 @@ public protocol StructurableSelectable {
     
     typealias DidDeselect = (UIView?) -> Void
     
+    // Applicable for collectionView only
+    var shouldSelect: Bool { get }
+    
+    // Applicable for collectionView only
+    var shouldDeselect: Bool { get }
+    
+    // Applicable for tableView only
     var willSelect: WillSelect? { get }
     
+    // Applicable for tableView only
     var willDeselect: WillDeselect? { get }
     
     var didSelect: DidSelect? { get }
@@ -202,6 +210,14 @@ public protocol StructurableSelectable {
 }
 
 extension StructurableSelectable {
+    
+    public var shouldSelect: Bool {
+        return true
+    }
+    
+    public var shouldDeselect: Bool {
+        return true
+    }
     
     public var willSelect: WillSelect? {
         return nil
@@ -315,6 +331,7 @@ public protocol StructurableMovable {
 
 // MARK: - StructurableFocusable
 
+@available(iOS 9.0, *)
 public protocol StructurableFocusable {
     
     typealias CanFocus = () -> Bool

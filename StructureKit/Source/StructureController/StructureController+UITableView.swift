@@ -554,7 +554,7 @@ extension StructureController: UITableViewDelegate {
     }
     
     internal func indexPathForPreferredFocusedView(in tableView: UITableView) -> IndexPath? {
-        if tableViewDelegate?.responds(to: #selector(indexPathForPreferredFocusedView(in:))) == true {
+        if tableViewDelegate?.responds(to: #selector(UITableViewDelegate.indexPathForPreferredFocusedView(in:))) == true {
             return tableViewDelegate?.indexPathForPreferredFocusedView?(in: tableView)
         } else {
             return nil
