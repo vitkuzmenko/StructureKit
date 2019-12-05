@@ -36,6 +36,32 @@ extension StructureController {
             if !diff.rowsToReload.isEmpty {
                 collectionView.reloadItems(at: diff.rowsToReload)
             }
+            
+            if !diff.sectionHeadersToReload.isEmpty {
+                diff.sectionHeadersToReload.forEach { index in
+                    if let header = self.structure[index].header, let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: index)) {
+                        switch header {
+                        case .view(let viewModel):
+                            viewModel._configure(collectionViewReusableSupplementaryView: headerView, isUpdating: true)
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
+            
+            if !diff.sectionFootersToReload.isEmpty {
+                diff.sectionFootersToReload.forEach { index in
+                    if let footer = self.structure[index].footer, let footerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(item: 0, section: index)) {
+                        switch footer {
+                        case .view(let viewModel):
+                            viewModel._configure(collectionViewReusableSupplementaryView: footerView, isUpdating: true)
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
         }
         
     }
