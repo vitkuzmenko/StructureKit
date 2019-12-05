@@ -161,7 +161,7 @@ public protocol StructurableHeightable {
 
 public protocol StructurableSizable {
     
-    func size(for parentView: UICollectionView) -> CGSize
+    func size(for collectionView: UICollectionView) -> CGSize
     
 }
 
@@ -236,7 +236,7 @@ public extension StructurableSelectable {
         return nil
     }
     
-    var didDeselect: DidSelect? {
+    var didDeselect: DidDeselect? {
         return nil
     }
     
