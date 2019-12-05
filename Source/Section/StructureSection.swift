@@ -71,7 +71,7 @@ extension StructureSection {
                 hasher.combine(text)
                 return hasher
             case .view(let viewModel):
-                return (viewModel as? StructureTableSectionHeaderFooterContentIdentifable)?.contentHasher()
+                return (viewModel as? StructureSectionHeaderFooterContentIdentifable)?.contentHasher()
             }
         } else {
             return nil

@@ -23,6 +23,10 @@ class CollectionViewController: UIViewController {
     func configureCollectionView() {
         structureController.register(collectionView, cellModelTypes: [
             City.self
+        ], reusableSupplementaryViewTypes: [
+            UICollectionView.elementKindSectionHeader: [
+                Country.self
+            ]
         ])
     }
     

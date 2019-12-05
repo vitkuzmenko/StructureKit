@@ -15,7 +15,7 @@ class CitiesStructureBuilder {
                 identifier: country.title,
                 rows: country.cities
             )
-            section.header = .view(CountryHeaderViewModel(country: country))
+            section.header = .view(country)
             section.footer = .text("Population: \(country.cities.reduce(0, { $0 + $1.population }))")
             return section
         }

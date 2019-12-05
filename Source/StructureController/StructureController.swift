@@ -82,13 +82,13 @@ final class StructureController: NSObject {
         }
         
         headerFooterModelTypes.forEach { type in
-            let identifier = type.reuseIdentifier(for: structureView)
+            let identifier = type.reuseIdentifierForTableViewHeaderFooter()
             let nib = UINib(nibName: identifier, bundle: nil)
             tableView.register(nib, forHeaderFooterViewReuseIdentifier: identifier)
         }
     }
     
-    public func register(_ collectionView: UICollectionView, cellModelTypes: [Structurable.Type] = [], reloadAnimated: Bool = true, collectionViewDelegate: UICollectionViewDelegate? = nil) {
+    public func register(_ collectionView: UICollectionView, cellModelTypes: [Structurable.Type] = [], reusableSupplementaryViewTypes: [String: [StructureSectionHeaderFooter.Type]] = [:], reloadAnimated: Bool = true, collectionViewDelegate: UICollectionViewDelegate? = nil) {
         
         if self.structureView != nil {
             fatalError("StructureController: Registration may be once per StructureController instance")
@@ -105,6 +105,14 @@ final class StructureController: NSObject {
             let identifier = type.reuseIdentifierForCollectionView()
             let nib = UINib(nibName: identifier, bundle: nil)
             collectionView.register(nib, forCellWithReuseIdentifier: identifier)
+        }
+        
+        reusableSupplementaryViewTypes.forEach { kind, types in
+            types.forEach { type in
+                let identifier = type.reuseIdentifierForCollectionReusableSupplementaryView()
+                let nib = UINib(nibName: identifier, bundle: nil)
+                collectionView.register(nib, forSupplementaryViewOfKind: kind, withReuseIdentifier: identifier)
+            }
         }
     }
     

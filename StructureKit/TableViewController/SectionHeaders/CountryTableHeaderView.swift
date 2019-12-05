@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CountryHeaderView: UITableViewHeaderFooterView {
+class CountryTableHeaderView: UITableViewHeaderFooterView {
 
     @IBOutlet var imageView: UIImageView!
     

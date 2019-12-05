@@ -53,7 +53,7 @@ extension StructureController {
                             headerView.textLabel?.text = text
                             headerView.textLabel?.sizeToFit()
                         case .view(let viewModel):
-                            viewModel.configureAny(view: headerView, isUpdating: true)
+                            viewModel._configure(tableViewHeaderFooterView: headerView, isUpdating: true)
                         }
                     }
                 }
@@ -67,7 +67,7 @@ extension StructureController {
                             footerView.textLabel?.text = text
                             footerView.textLabel?.sizeToFit()
                         case .view(let viewModel):
-                            viewModel.configureAny(view: footerView, isUpdating: true)
+                            viewModel._configure(tableViewHeaderFooterView: footerView, isUpdating: true)
                         }
                     }
                 }
@@ -298,9 +298,9 @@ extension StructureController: UITableViewDelegate {
         } else if let header = structure[section].header {
             switch header {
             case .view(let viewModel):
-                let identifier = type(of: viewModel).reuseIdentifier(for: .tableView(tableView))
+                let identifier = type(of: viewModel).reuseIdentifierForTableViewHeaderFooter()
                 if let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: identifier) {
-                    viewModel.configureAny(view: view, isUpdating: false)
+                    viewModel._configure(tableViewHeaderFooterView: view, isUpdating: false)
                     return view
                 } else {
                     return nil
@@ -319,9 +319,9 @@ extension StructureController: UITableViewDelegate {
         } else if let footer = structure[section].footer {
             switch footer {
             case .view(let viewModel):
-                let identifier = type(of: viewModel).reuseIdentifier(for: .tableView(tableView))
+                let identifier = type(of: viewModel).reuseIdentifierForTableViewHeaderFooter()
                 if let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: identifier) {
-                    viewModel.configureAny(view: view, isUpdating: false)
+                    viewModel._configure(tableViewHeaderFooterView: view, isUpdating: false)
                     return view
                 } else {
                     return nil

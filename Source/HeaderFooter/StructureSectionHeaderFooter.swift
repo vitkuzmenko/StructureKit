@@ -11,12 +11,34 @@ import UIKit
 // MARK: - StructureSectionHeaderFooter
 
 public protocol StructureSectionHeaderFooter {
+        
+    static func reuseIdentifierForTableViewHeaderFooter() -> String
     
-    static var cellAnyType: UIView.Type { get }
+    static func reuseIdentifierForCollectionReusableSupplementaryView() -> String
     
-    static func reuseIdentifier(for parentView: StructureView) -> String
+    func _configure(tableViewHeaderFooterView view: UITableViewHeaderFooterView, isUpdating: Bool)
     
-    func configureAny(view: UIView, isUpdating: Bool)
+    func _configure(collectionViewReusableSupplementaryView view: UICollectionReusableView, isUpdating: Bool)
+    
+}
+
+public extension StructureSectionHeaderFooter {
+
+    static func reuseIdentifierForTableViewHeaderFooter() -> String {
+        fatalError("Structurable: You should implement method reuseIdentifierForTableView")
+    }
+    
+    static func reuseIdentifierForCollectionReusableSupplementaryView() -> String {
+        fatalError("Structurable: You should implement method reuseIdentifierForCollectionView")
+    }
+    
+    func _configure(tableViewHeaderFooterView view: UITableViewHeaderFooterView, isUpdating: Bool) {
+        fatalError("Structurable: You should implement method _configure(tableViewHeaderFooterView:isUpdating:")
+    }
+    
+    func _configure(collectionViewReusableSupplementaryView view: UICollectionReusableView, isUpdating: Bool) {
+        fatalError("Structurable: You should implement method _configure(collectionViewHeaderFooterView:isUpdating:)")
+    }
     
 }
 
@@ -34,20 +56,11 @@ public protocol StructureTableSectionHeaderFooter: StructureSectionHeaderFooter 
 
 public extension StructureTableSectionHeaderFooter {
     
-    static var cellAnyType: UIView.Type {
+    static var tableViewCellType: UITableViewHeaderFooterView.Type {
         return TableViewHeaderFooterType.self
     }
-    
-    static func reuseIdentifier(for parentView: StructureView) -> String {
-        switch parentView {
-        case .tableView:
-            return reuseIdentifierForTableViewHeaderFooter()
-        default:
-            fatalError()
-        }
-    }
-    
-    func configureAny(view: UIView, isUpdating: Bool) {
+        
+    func _configure(tableViewHeaderFooterView view: UITableViewHeaderFooterView, isUpdating: Bool) {
         if let view = view as? TableViewHeaderFooterType {
             configure(tableViewHeaderFooterView: view, isUpdating: isUpdating)
         } else {
@@ -56,20 +69,52 @@ public extension StructureTableSectionHeaderFooter {
     }
     
     static func reuseIdentifierForTableViewHeaderFooter() -> String {
-        return String(describing: cellAnyType)
+        return String(describing: tableViewCellType)
+    }
+    
+}
+
+// MARK: - StructureCollectionSectionHeaderFooter
+
+public protocol StructureCollectionSectionHeaderFooter: StructureSectionHeaderFooter {
+    
+    associatedtype CollectionViewHeaderFooterType: UICollectionReusableView
+    
+    static func reuseIdentifierForCollectionReusableSupplementaryView() -> String
+    
+    func configure(collectionViewReusableSupplementaryView view: CollectionViewHeaderFooterType, isUpdating: Bool)
+    
+}
+
+public extension StructureCollectionSectionHeaderFooter {
+    
+    static var collectionViewCellType: UICollectionReusableView.Type {
+        return CollectionViewHeaderFooterType.self
+    }
+        
+    func _configure(collectionViewReusableSupplementaryView view: UICollectionReusableView, isUpdating: Bool) {
+        if let view = view as? CollectionViewHeaderFooterType {
+            configure(collectionViewReusableSupplementaryView: view, isUpdating: isUpdating)
+        } else {
+            assertionFailure("StructurableForCollectionView: cell should be subclass of UICollectionViewCell")
+        }
+    }
+    
+    static func reuseIdentifierForCollectionReusableSupplementaryView() -> String {
+        return String(describing: collectionViewCellType)
     }
     
 }
 
 // MARK: - StructureTableSectionHeaderFooterContentIdentifable
 
-public protocol StructureTableSectionHeaderFooterContentIdentifable {
+public protocol StructureSectionHeaderFooterContentIdentifable {
     
     func contentHash(into hasher: inout Hasher)
     
 }
 
-extension StructureTableSectionHeaderFooterContentIdentifable {
+extension StructureSectionHeaderFooterContentIdentifable {
     
     internal func contentHasher() -> Hasher {
         var hasher = Hasher()

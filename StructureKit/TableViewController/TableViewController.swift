@@ -26,7 +26,7 @@ class TableViewController: UIViewController {
         structureController.register(tableView, cellModelTypes: [
             City.self
         ], headerFooterModelTypes: [
-            CountryHeaderViewModel.self
+            Country.self
         ])
     }
     

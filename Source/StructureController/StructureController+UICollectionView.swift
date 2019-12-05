@@ -60,6 +60,32 @@ extension StructureController: UICollectionViewDataSource {
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let entity: StructureSection.HeaderFooter?
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            entity = structure[indexPath.section].header
+        case UICollectionView.elementKindSectionFooter:
+            entity = structure[indexPath.section].footer
+        default:
+            return UICollectionReusableView()
+        }
+        if let entity = entity {
+            switch entity {
+            case .view(let viewModel):
+                let identifier = type(of: viewModel).reuseIdentifierForCollectionReusableSupplementaryView()
+                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath)
+                viewModel._configure(collectionViewReusableSupplementaryView: view, isUpdating: false)
+                return view
+            default:
+                print("StructureController: UICollectionView is not support title for header")
+                return UICollectionReusableView()
+            }
+        } else {
+            return UICollectionReusableView()
+        }
+    }
+    
     // MARK: - Move
     
     @available(iOS 9.0, *)
@@ -124,13 +150,47 @@ extension StructureController: UICollectionViewDelegateFlowLayout {
         }
     }
 
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//        
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-//        
-//    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout
+        if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:referenceSizeForHeaderInSection:))) == true,
+            let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, referenceSizeForHeaderInSection: section) {
+            return value
+        } else if let header = structure[section].header {
+            switch header {
+            case .view(let viewModel):
+                if let viewModel = viewModel as? StructurableSizable {
+                    return viewModel.size(for: collectionView)
+                } else {
+                    return flowLayout?.headerReferenceSize ?? .zero
+                }
+            default:
+                return .zero
+            }
+        } else {
+            return flowLayout?.headerReferenceSize ?? .zero
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout
+        if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:referenceSizeForFooterInSection:))) == true,
+            let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, referenceSizeForFooterInSection: section) {
+            return value
+        } else if let footer = structure[section].footer {
+            switch footer {
+            case .view(let viewModel):
+                if let viewModel = viewModel as? StructurableSizable {
+                    return viewModel.size(for: collectionView)
+                } else {
+                    return flowLayout?.footerReferenceSize ?? .zero
+                }
+            default:
+                return .zero
+            }
+        } else {
+            return flowLayout?.footerReferenceSize ?? .zero
+        }
+    }
     
 }
 
@@ -215,6 +275,58 @@ extension StructureController: UICollectionViewDelegate {
             collectionViewDelegate?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
         } else if let object = self.cellModel(at: indexPath) as? StructureViewDisplayable {
             object.willDisplay?(cell)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:willDisplaySupplementaryView:forElementKind:at:))) == true {
+            collectionViewDelegate?.collectionView?(collectionView, willDisplaySupplementaryView: view, forElementKind: elementKind, at: indexPath)
+        } else {
+            let entity: StructureSection.HeaderFooter?
+            switch elementKind {
+            case UICollectionView.elementKindSectionHeader:
+                entity = structure[indexPath.section].header
+            case UICollectionView.elementKindSectionFooter:
+                entity = structure[indexPath.section].footer
+            default:
+                entity = nil
+            }
+            if let entity = entity {
+                switch entity {
+                case .view(let viewModel):
+                    if let viewModel = viewModel as? StructureViewDisplayable {
+                        viewModel.willDisplay?(view)
+                    }
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:didEndDisplayingSupplementaryView:forElementOfKind:at:))) == true {
+            collectionViewDelegate?.collectionView?(collectionView, didEndDisplayingSupplementaryView: view, forElementOfKind: elementKind, at: indexPath)
+        } else {
+            let entity: StructureSection.HeaderFooter?
+            switch elementKind {
+            case UICollectionView.elementKindSectionHeader:
+                entity = structure[indexPath.section].header
+            case UICollectionView.elementKindSectionFooter:
+                entity = structure[indexPath.section].footer
+            default:
+                entity = nil
+            }
+            if let entity = entity {
+                switch entity {
+                case .view(let viewModel):
+                    if let viewModel = viewModel as? StructureViewDisplayable {
+                        viewModel.didEndDisplay?(view)
+                    }
+                default:
+                    break
+                }
+            }
         }
     }
     

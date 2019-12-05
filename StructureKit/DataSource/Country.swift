@@ -8,10 +8,18 @@
 
 import Foundation
 
-struct Country {
+struct Country: Hashable {
     
     let title: String
     
     let cities: [City]
+    
+}
+
+extension Country: StructureSectionHeaderFooterContentIdentifable {
+    
+    func contentHash(into hasher: inout Hasher) {
+        hasher.combine(self)
+    }
     
 }
