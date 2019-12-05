@@ -13,7 +13,7 @@ public enum StructureView {
     case collectionView(UICollectionView)
 }
 
-final class StructureController: NSObject {
+final public class StructureController: NSObject {
     
     internal var structureView: StructureView!
     
@@ -23,11 +23,15 @@ final class StructureController: NSObject {
     
     public var tableAnimationRule: TableAnimationRule = .fade
     
+    internal var currentTableReloadingHasher: Hasher?
+    
     // MARK: - CollectionView Parameters
     
     internal weak var collectionViewDelegate: UICollectionViewDelegate?
     
     public var collectionViewReloadAnimated: Bool = true
+    
+    internal var currentCollectionReloadingHasher: Hasher?
     
     // MARK: - Structure
     

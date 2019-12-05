@@ -161,7 +161,7 @@ public protocol StructurableHeightable {
 
 public protocol StructurableSizable {
     
-    func size(for collectionView: UICollectionView) -> CGSize
+    func size(for parentView: UICollectionView) -> CGSize
     
 }
 

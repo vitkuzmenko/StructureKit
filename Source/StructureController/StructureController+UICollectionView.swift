@@ -10,14 +10,12 @@ import UIKit
 
 extension StructureController {
     
-    fileprivate static var currentCollectionReloadingHasher: Hasher?
-    
     internal func performCollectionViewReload(_ collectionView: UICollectionView, diff: StructureDiffer) {
             
         var hasher = Hasher()
         hasher.combine(Date())
         
-        StructureController.currentCollectionReloadingHasher = hasher
+        currentCollectionReloadingHasher = hasher
         
         collectionView.performBatchUpdates({
             
@@ -39,7 +37,7 @@ extension StructureController {
             
         }, completion: { _ in
             
-            guard hasher.finalize() == StructureController.currentCollectionReloadingHasher?.finalize() else { return }
+            guard hasher.finalize() == self.currentCollectionReloadingHasher?.finalize() else { return }
             
             if !diff.rowsToReload.isEmpty {
                 collectionView.reloadItems(at: diff.rowsToReload)
@@ -82,15 +80,15 @@ extension StructureController {
 
 extension StructureController: UICollectionViewDataSource {
     
-    internal func numberOfSections(in collectionView: UICollectionView) -> Int {
+    public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return structure.count
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return structure[section].rows.count
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let model = cellModel(at: indexPath) as? Structurable else { fatalError("Model should be Structurable") }
         let indetifier = type(of: model).reuseIdentifierForCollectionView()
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: indetifier, for: indexPath)
@@ -98,7 +96,7 @@ extension StructureController: UICollectionViewDataSource {
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let entity: StructureSection.HeaderFooter?
         switch kind {
         case UICollectionView.elementKindSectionHeader:
@@ -127,7 +125,7 @@ extension StructureController: UICollectionViewDataSource {
     // MARK: - Move
     
     @available(iOS 9.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
+    public func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
         if let model = cellModel(at: indexPath) as? StructurableMovable {
             return model.canMove
         } else {
@@ -136,8 +134,10 @@ extension StructureController: UICollectionViewDataSource {
     }
     
     @available(iOS 9.0, *)
-    func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        if let model = cellModel(at: sourceIndexPath) as? StructurableMovable {
+    public func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        if let model = cellModel(at: sourceIndexPath) as? StructurableMovable, let sModel = cellModel(at: sourceIndexPath) as? Structurable {
+            structure[sourceIndexPath.section].rows.remove(at: sourceIndexPath.item)
+            structure[destinationIndexPath.section].rows.insert(sModel, at: destinationIndexPath.item)
             model.didMove?(sourceIndexPath, destinationIndexPath)
         }
     }
@@ -150,7 +150,7 @@ extension StructureController: UICollectionViewDelegateFlowLayout {
         return collectionViewDelegate as? UICollectionViewDelegateFlowLayout
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:sizeForItemAt:))) == true,
             let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) {
             return value
@@ -161,7 +161,7 @@ extension StructureController: UICollectionViewDelegateFlowLayout {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:insetForSectionAt:))) == true,
             let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, insetForSectionAt: section) {
             return value
@@ -170,7 +170,7 @@ extension StructureController: UICollectionViewDelegateFlowLayout {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:minimumLineSpacingForSectionAt:))) == true,
             let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, minimumLineSpacingForSectionAt: section) {
             return value
@@ -179,7 +179,7 @@ extension StructureController: UICollectionViewDelegateFlowLayout {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:minimumInteritemSpacingForSectionAt:))) == true,
             let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, minimumInteritemSpacingForSectionAt: section) {
             return value
@@ -188,8 +188,7 @@ extension StructureController: UICollectionViewDelegateFlowLayout {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:referenceSizeForHeaderInSection:))) == true,
             let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, referenceSizeForHeaderInSection: section) {
             return value
@@ -199,18 +198,17 @@ extension StructureController: UICollectionViewDelegateFlowLayout {
                 if let viewModel = viewModel as? StructurableSizable {
                     return viewModel.size(for: collectionView)
                 } else {
-                    return flowLayout?.headerReferenceSize ?? .zero
+                    return .zero
                 }
             default:
                 return .zero
             }
         } else {
-            return flowLayout?.headerReferenceSize ?? .zero
+            return .zero
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:referenceSizeForFooterInSection:))) == true,
             let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, referenceSizeForFooterInSection: section) {
             return value
@@ -220,13 +218,13 @@ extension StructureController: UICollectionViewDelegateFlowLayout {
                 if let viewModel = viewModel as? StructurableSizable {
                     return viewModel.size(for: collectionView)
                 } else {
-                    return flowLayout?.footerReferenceSize ?? .zero
+                    return .zero
                 }
             default:
                 return .zero
             }
         } else {
-            return flowLayout?.footerReferenceSize ?? .zero
+            return .zero
         }
     }
     
@@ -236,7 +234,7 @@ extension StructureController: UICollectionViewDelegate {
     
     // MARK: - Highlighting
     
-    internal func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+    public func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldHighlightItemAt:))) == true,
             let shouldHighlight = collectionViewDelegate?.collectionView?(collectionView, shouldHighlightItemAt: indexPath) {
             return shouldHighlight
@@ -247,7 +245,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
 
-    internal func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didHighlightItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didHighlightItemAt: indexPath)
         } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
@@ -255,7 +253,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
 
-    internal func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didUnhighlightItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didUnhighlightItemAt: indexPath)
         } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
@@ -265,7 +263,7 @@ extension StructureController: UICollectionViewDelegate {
     
     // MARK: - Selection
     
-    internal func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+    public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldSelectItemAt:))) == true,
             let shouldSelect = collectionViewDelegate?.collectionView?(collectionView, shouldSelectItemAt: indexPath) {
             return shouldSelect
@@ -276,7 +274,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
+    public func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldDeselectItemAt:))) == true,
             let shouldDeselect = collectionViewDelegate?.collectionView?(collectionView, shouldDeselectItemAt: indexPath) {
             return shouldDeselect
@@ -287,7 +285,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didSelectItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
         } else if let object = self.cellModel(at: indexPath) as? StructurableSelectable, let cell = collectionView.cellForItem(at: indexPath) {
@@ -297,7 +295,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
         
-    internal func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didDeselectItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didDeselectItemAt: indexPath)
         } else if let object = self.cellModel(at: indexPath) as? StructurableSelectable, let didDeselect = object.didDeselect  {
@@ -308,7 +306,7 @@ extension StructureController: UICollectionViewDelegate {
     
     // MARK: - Will Display
     
-    internal func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:willDisplay:forItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
         } else if let object = self.cellModel(at: indexPath) as? StructurableDisplayable {
@@ -316,7 +314,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:willDisplaySupplementaryView:forElementKind:at:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, willDisplaySupplementaryView: view, forElementKind: elementKind, at: indexPath)
         } else {
@@ -342,7 +340,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didEndDisplayingSupplementaryView:forElementOfKind:at:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didEndDisplayingSupplementaryView: view, forElementOfKind: elementKind, at: indexPath)
         } else {
@@ -368,7 +366,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, transitionLayoutForOldLayout fromLayout: UICollectionViewLayout, newLayout toLayout: UICollectionViewLayout) -> UICollectionViewTransitionLayout {
+    public func collectionView(_ collectionView: UICollectionView, transitionLayoutForOldLayout fromLayout: UICollectionViewLayout, newLayout toLayout: UICollectionViewLayout) -> UICollectionViewTransitionLayout {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:transitionLayoutForOldLayout:newLayout:))) == true,
             let transitionLayout = collectionViewDelegate?.collectionView?(collectionView, transitionLayoutForOldLayout: fromLayout, newLayout: toLayout) {
             return transitionLayout
@@ -379,7 +377,7 @@ extension StructureController: UICollectionViewDelegate {
     
     // MARK: - Did End Display
     
-    internal func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didEndDisplaying:forItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
         } else if let object = self.cellModel(at: indexPath) as? StructurableDisplayable {
@@ -389,7 +387,7 @@ extension StructureController: UICollectionViewDelegate {
     
     // MARK: - Focus
     
-    internal func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
+    public func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:canFocusItemAt:))) == true,
             let canFocus = collectionViewDelegate?.collectionView?(collectionView, canFocusItemAt: indexPath) {
             return canFocus
@@ -400,7 +398,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, shouldUpdateFocusIn context: UICollectionViewFocusUpdateContext) -> Bool {
+    public func collectionView(_ collectionView: UICollectionView, shouldUpdateFocusIn context: UICollectionViewFocusUpdateContext) -> Bool {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldUpdateFocusIn:))) == true,
             let shouldUpdateFocus = collectionViewDelegate?.collectionView?(collectionView, shouldUpdateFocusIn: context) {
             return shouldUpdateFocus
@@ -409,13 +407,13 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+    public func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didUpdateFocusIn:with:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didUpdateFocusIn: context, with: coordinator)
         }
     }
     
-    internal func indexPathForPreferredFocusedView(in collectionView: UICollectionView) -> IndexPath? {
+    public func indexPathForPreferredFocusedView(in collectionView: UICollectionView) -> IndexPath? {
         if collectionViewDelegate?.responds(to: #selector(UICollectionViewDelegate.indexPathForPreferredFocusedView(in:))) == true {
             return collectionViewDelegate?.indexPathForPreferredFocusedView?(in: collectionView)
         } else {
@@ -425,7 +423,7 @@ extension StructureController: UICollectionViewDelegate {
     
     // MARK: - Moving
     
-    internal func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveFromItemAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+    public func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveFromItemAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:targetIndexPathForMoveFromItemAt:toProposedIndexPath:))) == true,
             let indexPath = collectionViewDelegate?.collectionView?(collectionView, targetIndexPathForMoveFromItemAt: sourceIndexPath, toProposedIndexPath: proposedDestinationIndexPath) {
             return indexPath
@@ -434,7 +432,7 @@ extension StructureController: UICollectionViewDelegate {
         }
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+    public func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:targetContentOffsetForProposedContentOffset:))) == true,
             let indexPath = collectionViewDelegate?.collectionView?(collectionView, targetContentOffsetForProposedContentOffset: proposedContentOffset) {
             return indexPath
@@ -446,7 +444,7 @@ extension StructureController: UICollectionViewDelegate {
     // MARK: - Spring Loading
     
     @available(iOS 11.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, shouldSpringLoadItemAt indexPath: IndexPath, with context: UISpringLoadedInteractionContext) -> Bool {
+    public func collectionView(_ collectionView: UICollectionView, shouldSpringLoadItemAt indexPath: IndexPath, with context: UISpringLoadedInteractionContext) -> Bool {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldSpringLoadItemAt:with:))) == true,
             let shouldSpringLoad = collectionViewDelegate?.collectionView?(collectionView, shouldSpringLoadItemAt: indexPath, with: context) {
             return shouldSpringLoad
@@ -460,7 +458,7 @@ extension StructureController: UICollectionViewDelegate {
     // MARK: - Multiple Selection
     
     @available(iOS 13.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+    public func collectionView(_ collectionView: UICollectionView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldBeginMultipleSelectionInteractionAt:))) == true,
             let shouldSpringLoad = collectionViewDelegate?.collectionView?(collectionView, shouldBeginMultipleSelectionInteractionAt: indexPath) {
             return shouldSpringLoad
@@ -472,7 +470,7 @@ extension StructureController: UICollectionViewDelegate {
     }
     
     @available(iOS 13.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didBeginMultipleSelectionInteractionAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didBeginMultipleSelectionInteractionAt: indexPath)
         } else if let object = self.cellModel(at: indexPath) as? StructurableMultipleSelectable {
@@ -481,7 +479,7 @@ extension StructureController: UICollectionViewDelegate {
     }
     
     @available(iOS 13.0, *)
-    internal func collectionViewDidEndMultipleSelectionInteraction(_ collectionView: UICollectionView) {
+    public func collectionViewDidEndMultipleSelectionInteraction(_ collectionView: UICollectionView) {
         if collectionViewDelegate?.responds(to: #selector(collectionViewDidEndMultipleSelectionInteraction(_:))) == true {
             collectionViewDelegate?.collectionViewDidEndMultipleSelectionInteraction?(collectionView)
         }
@@ -490,7 +488,7 @@ extension StructureController: UICollectionViewDelegate {
     // MARK: - Contextual menu
     
     @available(iOS 13.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    public func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:contextMenuConfigurationForItemAt:point:))) == true {
             return collectionViewDelegate?.collectionView?(collectionView, contextMenuConfigurationForItemAt: indexPath, point: point)
         } else if let object = self.cellModel(at: indexPath) as? StructurableContextualMenuConfigurable {
@@ -501,7 +499,7 @@ extension StructureController: UICollectionViewDelegate {
     }
     
     @available(iOS 13.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+    public func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:previewForHighlightingContextMenuWithConfiguration:))) == true {
             return collectionViewDelegate?.collectionView?(collectionView, previewForHighlightingContextMenuWithConfiguration: configuration)
         } else {
@@ -510,7 +508,7 @@ extension StructureController: UICollectionViewDelegate {
     }
 
     @available(iOS 13.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+    public func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:previewForDismissingContextMenuWithConfiguration:))) == true {
             return collectionViewDelegate?.collectionView?(collectionView, previewForDismissingContextMenuWithConfiguration: configuration)
         } else {
@@ -519,7 +517,7 @@ extension StructureController: UICollectionViewDelegate {
     }
 
     @available(iOS 13.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+    public func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:willPerformPreviewActionForMenuWith:animator:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, willPerformPreviewActionForMenuWith: configuration, animator: animator)
         }

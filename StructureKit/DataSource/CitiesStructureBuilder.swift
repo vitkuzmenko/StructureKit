@@ -10,7 +10,7 @@ import Foundation
 class CitiesStructureBuilder {
     
     func makeStructure() -> [StructureSection] {
-        return CitiesDataSource().countries().map { country -> StructureSection in
+        return CitiesDataSource().countries().map { country in
             var section = StructureSection(
                 identifier: country.title,
                 rows: country.cities
