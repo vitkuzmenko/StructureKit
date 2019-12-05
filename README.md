@@ -52,7 +52,7 @@ Implement `StructurableForTableView` for using in `tableView` and configure cell
 ```swift
 extension City: StructurableForTableView {
     
-    // Reuse identifier will be registered with class name
+    // Reuse identifier will be registered as class name
     func configure(tableViewCell cell: CityTableViewCell) {
         cell.textLabel?.text = name
     }
