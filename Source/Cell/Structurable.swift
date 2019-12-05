@@ -218,25 +218,25 @@ public protocol StructurableSelectable {
     
 }
 
-extension StructurableSelectable {
+public extension StructurableSelectable {
     
-    public var shouldSelect: Bool {
+    var shouldSelect: Bool {
         return true
     }
     
-    public var shouldDeselect: Bool {
+    var shouldDeselect: Bool {
         return true
     }
     
-    public var willSelect: WillSelect? {
+    var willSelect: WillSelect? {
         return nil
     }
     
-    public var willDeselect: WillDeselect? {
+    var willDeselect: WillDeselect? {
         return nil
     }
     
-    public var didDeselect: DidSelect? {
+    var didDeselect: DidSelect? {
         return nil
     }
     
@@ -285,9 +285,9 @@ public protocol StructurableEditable {
     
 }
 
-extension StructurableEditable {
+public extension StructurableEditable {
     
-    public var shouldIndentWhileEditing: Bool {
+    var shouldIndentWhileEditing: Bool {
         return true
     }
     
@@ -303,7 +303,7 @@ extension StructurableEditable {
 
 // MARK: - StructureViewWillDisplay
 
-public protocol StructureViewDisplayable {
+public protocol StructurableDisplayable {
     
     typealias WillDisplay = (UIView) -> Void
     
@@ -315,9 +315,9 @@ public protocol StructureViewDisplayable {
     
 }
 
-extension StructureViewDisplayable {
+public extension StructurableDisplayable {
     
-    public var didEndDisplay: DidEndDisplay? {
+    var didEndDisplay: DidEndDisplay? {
         return nil
     }
     
@@ -328,11 +328,9 @@ extension StructureViewDisplayable {
 
 public protocol StructurableMovable {
     
-    typealias CanMove = () -> Bool
-    
     typealias DidMove = (IndexPath, IndexPath) -> Void
     
-    var canMove: CanMove? { get }
+    var canMove: Bool { get }
     
     var didMove: DidMove? { get }
     

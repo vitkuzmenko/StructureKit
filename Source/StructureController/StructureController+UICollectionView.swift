@@ -129,7 +129,7 @@ extension StructureController: UICollectionViewDataSource {
     @available(iOS 9.0, *)
     internal func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
         if let model = cellModel(at: indexPath) as? StructurableMovable {
-            return model.canMove?() ?? false
+            return model.canMove
         } else {
             return false
         }
@@ -311,7 +311,7 @@ extension StructureController: UICollectionViewDelegate {
     internal func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:willDisplay:forItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
-        } else if let object = self.cellModel(at: indexPath) as? StructureViewDisplayable {
+        } else if let object = self.cellModel(at: indexPath) as? StructurableDisplayable {
             object.willDisplay?(cell)
         }
     }
@@ -332,7 +332,7 @@ extension StructureController: UICollectionViewDelegate {
             if let entity = entity {
                 switch entity {
                 case .view(let viewModel):
-                    if let viewModel = viewModel as? StructureViewDisplayable {
+                    if let viewModel = viewModel as? StructurableDisplayable {
                         viewModel.willDisplay?(view)
                     }
                 default:
@@ -358,7 +358,7 @@ extension StructureController: UICollectionViewDelegate {
             if let entity = entity {
                 switch entity {
                 case .view(let viewModel):
-                    if let viewModel = viewModel as? StructureViewDisplayable {
+                    if let viewModel = viewModel as? StructurableDisplayable {
                         viewModel.didEndDisplay?(view)
                     }
                 default:
@@ -382,7 +382,7 @@ extension StructureController: UICollectionViewDelegate {
     internal func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didEndDisplaying:forItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
-        } else if let object = self.cellModel(at: indexPath) as? StructureViewDisplayable {
+        } else if let object = self.cellModel(at: indexPath) as? StructurableDisplayable {
             object.didEndDisplay?(cell)
         }
     }

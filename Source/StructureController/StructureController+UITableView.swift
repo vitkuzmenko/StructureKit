@@ -146,7 +146,7 @@ extension StructureController: UITableViewDataSource {
     
     internal func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         if let object = self.cellModel(at: indexPath) as? StructurableMovable {
-            return object.canMove?() ?? false
+            return object.canMove
         }
         return false
     }
@@ -178,7 +178,7 @@ extension StructureController: UITableViewDelegate {
     internal func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if tableViewDelegate?.responds(to: #selector(tableView(_:willDisplay:forRowAt:))) == true {
             tableViewDelegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
-        } else if let object = self.cellModel(at: indexPath) as? StructureViewDisplayable {
+        } else if let object = self.cellModel(at: indexPath) as? StructurableDisplayable {
             object.willDisplay?(cell)
         }
     }
@@ -189,7 +189,7 @@ extension StructureController: UITableViewDelegate {
         } else if let header = structure[section].header {
             switch header {
             case .view(let viewModel):
-                if let viewModel = viewModel as? StructureViewDisplayable {
+                if let viewModel = viewModel as? StructurableDisplayable {
                     viewModel.willDisplay?(view)
                 }
             default:
@@ -204,7 +204,7 @@ extension StructureController: UITableViewDelegate {
         } else if let footer = structure[section].footer {
             switch footer {
             case .view(let viewModel):
-                if let viewModel = viewModel as? StructureViewDisplayable {
+                if let viewModel = viewModel as? StructurableDisplayable {
                     viewModel.willDisplay?(view)
                 }
             default:
@@ -218,7 +218,7 @@ extension StructureController: UITableViewDelegate {
     internal func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if tableViewDelegate?.responds(to: #selector(tableView(_:didEndDisplaying:forRowAt:))) == true {
             tableViewDelegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
-        } else if let object = self.cellModel(at: indexPath) as? StructureViewDisplayable {
+        } else if let object = self.cellModel(at: indexPath) as? StructurableDisplayable {
             object.didEndDisplay?(cell)
         }
     }
@@ -229,7 +229,7 @@ extension StructureController: UITableViewDelegate {
         } else if let header = structure[section].header {
             switch header {
             case .view(let viewModel):
-                if let viewModel = viewModel as? StructureViewDisplayable {
+                if let viewModel = viewModel as? StructurableDisplayable {
                     viewModel.didEndDisplay?(view)
                 }
             default:
@@ -244,7 +244,7 @@ extension StructureController: UITableViewDelegate {
         } else if let footer = structure[section].footer {
             switch footer {
             case .view(let viewModel):
-                if let viewModel = viewModel as? StructureViewDisplayable {
+                if let viewModel = viewModel as? StructurableDisplayable {
                     viewModel.didEndDisplay?(view)
                 }
             default:
