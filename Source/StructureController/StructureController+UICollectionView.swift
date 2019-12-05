@@ -10,7 +10,35 @@ import UIKit
 
 extension StructureController {
     
-    
+    internal func performCollectionViewReload(_ collectionView: UICollectionView, diff: StructureDiffer) {
+            
+        collectionView.performBatchUpdates({
+            
+            for movement in diff.sectionsToMove {
+                collectionView.moveSection(movement.from, toSection: movement.to)
+            }
+            
+            collectionView.deleteSections(diff.sectionsToDelete)
+            
+            collectionView.insertSections(diff.sectionsToInsert)
+            
+            for movement in diff.rowsToMove {
+                collectionView.moveItem(at: movement.from, to: movement.to)
+            }
+            
+            collectionView.deleteItems(at: diff.rowsToDelete)
+            
+            collectionView.insertItems(at: diff.rowsToInsert)
+            
+        }, completion: nil)
+        
+        DispatchQueue.main.async {
+            if !diff.rowsToReload.isEmpty {
+                collectionView.reloadItems(at: diff.rowsToReload)
+            }
+        }
+        
+    }
     
 }
 
@@ -26,9 +54,9 @@ extension StructureController: UICollectionViewDataSource {
     
     internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let model = cellModel(at: indexPath) as? Structurable else { fatalError("Model should be Structurable") }
-        let indetifier = type(of: model).reuseIdentifier(for: .collectionView(collectionView))
+        let indetifier = type(of: model).reuseIdentifierForCollectionView()
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: indetifier, for: indexPath)
-        model.configureAny(cell: cell)
+        model._configure(collectionViewCell: cell)
         return cell
     }
     
@@ -52,21 +80,57 @@ extension StructureController: UICollectionViewDataSource {
     
 }
 
-extension StructureController: UICollectionViewDataSourcePrefetching {
-        
-    @available(iOS 10.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        if collectionViewDataSourcePrefetching?.responds(to: #selector(collectionView(_:prefetchItemsAt:))) == true {
-            collectionViewDataSourcePrefetching?.collectionView(collectionView, prefetchItemsAt: indexPaths)
-        }
+extension StructureController: UICollectionViewDelegateFlowLayout {
+    
+    fileprivate var collectionViewDeleagteFlowLayout: UICollectionViewDelegateFlowLayout? {
+        return collectionViewDelegate as? UICollectionViewDelegateFlowLayout
     }
     
-    @available(iOS 10.0, *)
-    internal func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        if collectionViewDataSourcePrefetching?.responds(to: #selector(collectionView(_:cancelPrefetchingForItemsAt:))) == true {
-            collectionViewDataSourcePrefetching?.collectionView?(collectionView, cancelPrefetchingForItemsAt: indexPaths)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:sizeForItemAt:))) == true,
+            let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) {
+            return value
+        } else if let object = self.cellModel(at: indexPath) as? StructurableSizable {
+            return object.size(for: collectionView)
+        } else {
+            return (collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize ?? .zero
         }
     }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:insetForSectionAt:))) == true,
+            let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, insetForSectionAt: section) {
+            return value
+        } else {
+            return (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset ?? .zero
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:minimumLineSpacingForSectionAt:))) == true,
+            let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, minimumLineSpacingForSectionAt: section) {
+            return value
+        } else {
+            return (collectionViewLayout as? UICollectionViewFlowLayout)?.minimumLineSpacing ?? .zero
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        if collectionViewDeleagteFlowLayout?.responds(to: #selector(collectionView(_:layout:minimumInteritemSpacingForSectionAt:))) == true,
+            let value = collectionViewDeleagteFlowLayout?.collectionView?(collectionView, layout: collectionViewLayout, minimumInteritemSpacingForSectionAt: section) {
+            return value
+        } else {
+            return (collectionViewLayout as? UICollectionViewFlowLayout)?.minimumInteritemSpacing ?? .zero
+        }
+    }
+
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//        
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+//        
+//    }
     
 }
 
@@ -75,7 +139,8 @@ extension StructureController: UICollectionViewDelegate {
     // MARK: - Highlighting
     
     internal func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldHighlightItemAt:))) == true, let shouldHighlight = collectionViewDelegate?.collectionView?(collectionView, shouldHighlightItemAt: indexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldHighlightItemAt:))) == true,
+            let shouldHighlight = collectionViewDelegate?.collectionView?(collectionView, shouldHighlightItemAt: indexPath) {
             return shouldHighlight
         } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
             return object.shouldHighlight
@@ -103,7 +168,8 @@ extension StructureController: UICollectionViewDelegate {
     // MARK: - Selection
     
     internal func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldSelectItemAt:))) == true, let shouldSelect = collectionViewDelegate?.collectionView?(collectionView, shouldSelectItemAt: indexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldSelectItemAt:))) == true,
+            let shouldSelect = collectionViewDelegate?.collectionView?(collectionView, shouldSelectItemAt: indexPath) {
             return shouldSelect
         } else if let object = self.cellModel(at: indexPath) as? StructurableSelectable {
             return object.shouldSelect
@@ -113,7 +179,8 @@ extension StructureController: UICollectionViewDelegate {
     }
     
     internal func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldDeselectItemAt:))) == true, let shouldDeselect = collectionViewDelegate?.collectionView?(collectionView, shouldDeselectItemAt: indexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldDeselectItemAt:))) == true,
+            let shouldDeselect = collectionViewDelegate?.collectionView?(collectionView, shouldDeselectItemAt: indexPath) {
             return shouldDeselect
         } else if let object = self.cellModel(at: indexPath) as? StructurableSelectable {
             return object.shouldDeselect
@@ -152,7 +219,8 @@ extension StructureController: UICollectionViewDelegate {
     }
     
     internal func collectionView(_ collectionView: UICollectionView, transitionLayoutForOldLayout fromLayout: UICollectionViewLayout, newLayout toLayout: UICollectionViewLayout) -> UICollectionViewTransitionLayout {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:transitionLayoutForOldLayout:newLayout:))) == true, let transitionLayout = collectionViewDelegate?.collectionView?(collectionView, transitionLayoutForOldLayout: fromLayout, newLayout: toLayout) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:transitionLayoutForOldLayout:newLayout:))) == true,
+            let transitionLayout = collectionViewDelegate?.collectionView?(collectionView, transitionLayoutForOldLayout: fromLayout, newLayout: toLayout) {
             return transitionLayout
         } else {
             return UICollectionViewTransitionLayout(currentLayout: fromLayout, nextLayout: toLayout)
@@ -172,7 +240,8 @@ extension StructureController: UICollectionViewDelegate {
     // MARK: - Focus
     
     internal func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:canFocusItemAt:))) == true, let canFocus = collectionViewDelegate?.collectionView?(collectionView, canFocusItemAt: indexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:canFocusItemAt:))) == true,
+            let canFocus = collectionViewDelegate?.collectionView?(collectionView, canFocusItemAt: indexPath) {
             return canFocus
         } else if let object = self.cellModel(at: indexPath) as? StructurableFocusable {
             return object.canFocus?() ?? false
@@ -182,7 +251,8 @@ extension StructureController: UICollectionViewDelegate {
     }
     
     internal func collectionView(_ collectionView: UICollectionView, shouldUpdateFocusIn context: UICollectionViewFocusUpdateContext) -> Bool {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldUpdateFocusIn:))) == true, let shouldUpdateFocus = collectionViewDelegate?.collectionView?(collectionView, shouldUpdateFocusIn: context) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldUpdateFocusIn:))) == true,
+            let shouldUpdateFocus = collectionViewDelegate?.collectionView?(collectionView, shouldUpdateFocusIn: context) {
             return shouldUpdateFocus
         } else {
             return true
@@ -206,7 +276,8 @@ extension StructureController: UICollectionViewDelegate {
     // MARK: - Moving
     
     internal func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveFromItemAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:targetIndexPathForMoveFromItemAt:toProposedIndexPath:))) == true, let indexPath = collectionViewDelegate?.collectionView?(collectionView, targetIndexPathForMoveFromItemAt: sourceIndexPath, toProposedIndexPath: proposedDestinationIndexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:targetIndexPathForMoveFromItemAt:toProposedIndexPath:))) == true,
+            let indexPath = collectionViewDelegate?.collectionView?(collectionView, targetIndexPathForMoveFromItemAt: sourceIndexPath, toProposedIndexPath: proposedDestinationIndexPath) {
             return indexPath
         } else {
             return proposedDestinationIndexPath
@@ -214,7 +285,8 @@ extension StructureController: UICollectionViewDelegate {
     }
     
     internal func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:targetContentOffsetForProposedContentOffset:))) == true, let indexPath = collectionViewDelegate?.collectionView?(collectionView, targetContentOffsetForProposedContentOffset: proposedContentOffset) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:targetContentOffsetForProposedContentOffset:))) == true,
+            let indexPath = collectionViewDelegate?.collectionView?(collectionView, targetContentOffsetForProposedContentOffset: proposedContentOffset) {
             return indexPath
         } else {
             return proposedContentOffset
@@ -225,7 +297,8 @@ extension StructureController: UICollectionViewDelegate {
     
     @available(iOS 11.0, *)
     internal func collectionView(_ collectionView: UICollectionView, shouldSpringLoadItemAt indexPath: IndexPath, with context: UISpringLoadedInteractionContext) -> Bool {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldSpringLoadItemAt:with:))) == true, let shouldSpringLoad = collectionViewDelegate?.collectionView?(collectionView, shouldSpringLoadItemAt: indexPath, with: context) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldSpringLoadItemAt:with:))) == true,
+            let shouldSpringLoad = collectionViewDelegate?.collectionView?(collectionView, shouldSpringLoadItemAt: indexPath, with: context) {
             return shouldSpringLoad
         } else if let object = self.cellModel(at: indexPath) as? StructurableSpringLoadable {
             return object.shouldSpringLoad?(context) ?? false
@@ -238,7 +311,8 @@ extension StructureController: UICollectionViewDelegate {
     
     @available(iOS 13.0, *)
     internal func collectionView(_ collectionView: UICollectionView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
-        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldBeginMultipleSelectionInteractionAt:))) == true, let shouldSpringLoad = collectionViewDelegate?.collectionView?(collectionView, shouldBeginMultipleSelectionInteractionAt: indexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldBeginMultipleSelectionInteractionAt:))) == true,
+            let shouldSpringLoad = collectionViewDelegate?.collectionView?(collectionView, shouldBeginMultipleSelectionInteractionAt: indexPath) {
             return shouldSpringLoad
         } else if let object = self.cellModel(at: indexPath) as? StructurableMultipleSelectable {
             return object.shouldBeginMultipleSelection

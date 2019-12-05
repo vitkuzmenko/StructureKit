@@ -12,11 +12,33 @@ import UIKit
 
 public protocol Structurable {
     
-    static var cellAnyType: UIView.Type { get }
+    static func reuseIdentifierForTableView() -> String
     
-    static func reuseIdentifier(for parentView: StructureView) -> String
+    static func reuseIdentifierForCollectionView() -> String
     
-    func configureAny(cell: UIView)
+    func _configure(tableViewCell cell: UITableViewCell)
+    
+    func _configure(collectionViewCell cell: UICollectionViewCell)
+    
+}
+
+public extension Structurable {
+
+    static func reuseIdentifierForTableView() -> String {
+        fatalError("Structurable: You should implement method reuseIdentifierForTableView")
+    }
+    
+    static func reuseIdentifierForCollectionView() -> String {
+        fatalError("Structurable: You should implement method reuseIdentifierForCollectionView")
+    }
+    
+    func _configure(tableViewCell cell: UITableViewCell) {
+        fatalError("Structurable: You should implement method _configure(tableViewCell:)")
+    }
+    
+    func _configure(collectionViewCell cell: UICollectionViewCell) {
+        fatalError("Structurable: You should implement method _configure(collectionViewCell:)")
+    }
     
 }
 
@@ -34,29 +56,20 @@ public protocol StructurableForTableView: Structurable {
 
 public extension StructurableForTableView {
     
-    static var cellAnyType: UIView.Type {
+    static var tableViewCellType: UIView.Type {
         return TableViewCellType.self
     }
-    
-    static func reuseIdentifier(for parentView: StructureView) -> String {
-        switch parentView {
-        case .tableView:
-            return reuseIdentifierForTableView()
-        default:
-            fatalError()
-        }
-    }
-    
-    func configureAny(cell: UIView) {
+        
+    func _configure(tableViewCell cell: UITableViewCell) {
         if let cell = cell as? TableViewCellType {
             configure(tableViewCell: cell)
         } else {
-            assertionFailure("StructurableForTableView: cell should be subclass of UITableViewCell")
+            assertionFailure("StructurableForTableView: cell should be \(String(describing: TableViewCellType.self))")
         }
     }
     
     static func reuseIdentifierForTableView() -> String {
-        return String(describing: cellAnyType)
+        return String(describing: tableViewCellType)
     }
     
 }
@@ -67,7 +80,7 @@ public protocol StructurableForCollectionView: Structurable {
     
     associatedtype CollectionViewCellType: UICollectionViewCell
     
-    func reuseIdentifierForCollectionView() -> String
+    static func reuseIdentifierForCollectionView() -> String
     
     func configure(collectionViewCell cell: CollectionViewCellType)
     
@@ -75,29 +88,20 @@ public protocol StructurableForCollectionView: Structurable {
 
 public extension StructurableForCollectionView {
     
-    static var cellAnyType: UIView.Type {
+    static var collectionViewCellType: UIView.Type {
         return CollectionViewCellType.self
     }
     
-    func reuseIdentifier(for parentView: StructureView) -> String {
-        switch parentView {
-        case .collectionView:
-            return reuseIdentifierForCollectionView()
-        default:
-            fatalError()
-        }
-    }
-    
-    func configureAny(cell: UIView) {
+    func _configure(collectionViewCell cell: UICollectionViewCell) {
         if let cell = cell as? CollectionViewCellType {
             configure(collectionViewCell: cell)
         } else {
-            assertionFailure("StructurableForTableView: cell should be subclass of UICollectionViewCell")
+            assertionFailure("StructurableForTableView: cell should be \(String(describing: CollectionViewCellType.self))")
         }
     }
     
     static func reuseIdentifierForCollectionView() -> String {
-        return String(describing: cellAnyType)
+        return String(describing: collectionViewCellType)
     }
     
 }
@@ -112,10 +116,15 @@ public protocol StructurableIdentifable {
 
 extension StructurableIdentifable {
     
-    internal func identifyHasher(for StructureView: StructureView) -> Hasher {
+    internal func identifyHasher(for structureView: StructureView) -> Hasher {
         var hasher = Hasher()
         let cell = self as! Structurable
-        hasher.combine(type(of: cell).reuseIdentifier(for: StructureView))
+        switch structureView {
+        case .tableView:
+            hasher.combine(type(of: cell).reuseIdentifierForTableView())
+        case .collectionView:
+            hasher.combine(type(of: cell).reuseIdentifierForCollectionView())
+        }
         identifyHash(into: &hasher)
         return hasher
     }

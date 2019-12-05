@@ -10,6 +10,17 @@ import UIKit
 
 extension StructureController {
     
+    fileprivate var scrollViewDelegate: UIScrollViewDelegate? {
+        switch structureView {
+        case .tableView:
+            return tableViewDelegate
+        case .collectionView:
+            return collectionViewDelegate
+        case .none:
+            fatalError()
+        }
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollViewDelegate?.scrollViewDidScroll?(scrollView)
     }

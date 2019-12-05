@@ -94,9 +94,9 @@ extension StructureController: UITableViewDataSource {
     
     internal func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let model = cellModel(at: indexPath) as? Structurable else { fatalError("Model should be Structurable") }
-        let indetifier = type(of: model).reuseIdentifier(for: .tableView(tableView))
+        let indetifier = type(of: model).reuseIdentifierForTableView()
         let cell = tableView.dequeueReusableCell(withIdentifier: indetifier, for: indexPath)
-        model.configureAny(cell: cell)
+        model._configure(tableViewCell: cell)
         return cell
     }
         
@@ -153,22 +153,6 @@ extension StructureController: UITableViewDataSource {
     internal func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         if let object = self.cellModel(at: sourceIndexPath) as? StructurableMovable {
             object.didMove?(sourceIndexPath, destinationIndexPath)
-        }
-    }
-    
-}
-
-extension StructureController: UITableViewDataSourcePrefetching {
-        
-    internal func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        if tableViewDataSourcePrefetching?.responds(to: #selector(tableView(_:prefetchRowsAt:))) == true {
-            tableViewDataSourcePrefetching?.tableView(tableView, prefetchRowsAt: indexPaths)
-        }
-    }
-    
-    internal func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        if tableViewDataSourcePrefetching?.responds(to: #selector(tableView(_:cancelPrefetchingForRowsAt:))) == true {
-            tableViewDataSourcePrefetching?.tableView?(tableView, cancelPrefetchingForRowsAt: indexPaths)
         }
     }
     

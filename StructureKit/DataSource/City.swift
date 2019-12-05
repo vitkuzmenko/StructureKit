@@ -8,10 +8,26 @@
 
 import Foundation
 
-struct City {
+struct City: Hashable {
     
     let name: String
     
     let population: Int
     
 }
+
+extension City: StructurableIdentifable {
+    
+    func identifyHash(into hasher: inout Hasher) {
+        hasher.combine(name)
+    }
+    
+}
+
+//extension City: StructurableContentIdentifable {
+//
+//    func contentHash(into hasher: inout Hasher) {
+//        hasher.combine(self)
+//    }
+//
+//}
