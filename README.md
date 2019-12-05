@@ -11,7 +11,7 @@ StructureKit is an simplest way to control very very hard tables or collections.
 - 🤩 Automatic diff calculation for animations (insert, delete, move, update)
 - 🙀 Super easy creating and controlling collections with different cell types
 - 🤨 Does not store in memory previously used models for diff calculation
-- 🤗 Using one `cellModel` for `tableView` or `collectionView`
+- 🤗 Using one `cellModel` for both `tableView` and `collectionView`
 
 ## Getting Started
 
