@@ -10,36 +10,20 @@ import UIKit
 
 extension StructureController {
     
+    fileprivate static var currentTableReloadingHasher: Hasher?
+    
     internal func performTableViewReload(_ tableView: UITableView, diff: StructureDiffer, with animation: TableAnimationRule) {
             
-        tableView.beginUpdates()
-                            
-        for movement in diff.sectionsToMove {
-            tableView.moveSection(movement.from, toSection: movement.to)
-        }
+        var hasher = Hasher()
+        hasher.combine(Date())
         
-        if !diff.sectionsToDelete.isEmpty {
-            tableView.deleteSections(diff.sectionsToDelete, with: animation.delete)
-        }
+        StructureController.currentTableReloadingHasher = hasher
         
-        if !diff.sectionsToInsert.isEmpty {
-            tableView.insertSections(diff.sectionsToInsert, with: animation.insert)
-        }
+        CATransaction.begin()
         
-        for movement in diff.rowsToMove {
-            tableView.moveRow(at: movement.from, to: movement.to)
-        }
-        
-        if !diff.rowsToDelete.isEmpty {
-            tableView.deleteRows(at: diff.rowsToDelete, with: animation.delete)
-        }
-        
-        if !diff.rowsToInsert.isEmpty {
-            tableView.insertRows(at: diff.rowsToInsert, with: animation.insert)
-        }
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let `self` = self else { return }
+        CATransaction.setCompletionBlock({
+            
+            guard hasher.finalize() == StructureController.currentTableReloadingHasher?.finalize() else { return }
             
             if !diff.rowsToReload.isEmpty {
                 tableView.reloadRows(at: diff.rowsToReload, with: animation.reload)
@@ -72,9 +56,38 @@ extension StructureController {
                     }
                 }
             }
+            
+        })
+        
+        tableView.beginUpdates()
+                            
+        for movement in diff.sectionsToMove {
+            tableView.moveSection(movement.from, toSection: movement.to)
+        }
+        
+        if !diff.sectionsToDelete.isEmpty {
+            tableView.deleteSections(diff.sectionsToDelete, with: animation.delete)
+        }
+        
+        if !diff.sectionsToInsert.isEmpty {
+            tableView.insertSections(diff.sectionsToInsert, with: animation.insert)
+        }
+        
+        for movement in diff.rowsToMove {
+            tableView.moveRow(at: movement.from, to: movement.to)
+        }
+        
+        if !diff.rowsToDelete.isEmpty {
+            tableView.deleteRows(at: diff.rowsToDelete, with: animation.delete)
+        }
+        
+        if !diff.rowsToInsert.isEmpty {
+            tableView.insertRows(at: diff.rowsToInsert, with: animation.insert)
         }
         
         tableView.endUpdates()
+        
+        CATransaction.commit()
         
     }
             

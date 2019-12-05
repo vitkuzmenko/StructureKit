@@ -10,8 +10,15 @@ import UIKit
 
 extension StructureController {
     
+    fileprivate static var currentCollectionReloadingHasher: Hasher?
+    
     internal func performCollectionViewReload(_ collectionView: UICollectionView, diff: StructureDiffer) {
             
+        var hasher = Hasher()
+        hasher.combine(Date())
+        
+        StructureController.currentCollectionReloadingHasher = hasher
+        
         collectionView.performBatchUpdates({
             
             for movement in diff.sectionsToMove {
@@ -30,9 +37,10 @@ extension StructureController {
             
             collectionView.insertItems(at: diff.rowsToInsert)
             
-        }, completion: nil)
-        
-        DispatchQueue.main.async {
+        }, completion: { _ in
+            
+            guard hasher.finalize() == StructureController.currentCollectionReloadingHasher?.finalize() else { return }
+            
             if !diff.rowsToReload.isEmpty {
                 collectionView.reloadItems(at: diff.rowsToReload)
             }
@@ -62,6 +70,10 @@ extension StructureController {
                     }
                 }
             }
+        })
+        
+        DispatchQueue.main.async {
+            
         }
         
     }

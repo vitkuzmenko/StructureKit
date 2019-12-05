@@ -24,10 +24,10 @@ extension City: StructurableIdentifable {
     
 }
 
-//extension City: StructurableContentIdentifable {
-//
-//    func contentHash(into hasher: inout Hasher) {
-//        hasher.combine(self)
-//    }
-//
-//}
+extension City: StructurableContentIdentifable {
+
+    func contentHash(into hasher: inout Hasher) {
+        hasher.combine(self)
+    }
+
+}
