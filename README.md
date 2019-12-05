@@ -2,7 +2,7 @@
 
 StructureKit is an simplest way to control very very hard tables or collections.
 
-##Features
+## Features
 
 - Forget exceptions like `attempt to insert, delete, move etc...`
 - Forget `numberOfRows, numberOfItems, cellForRow etc...`
@@ -13,9 +13,9 @@ StructureKit is an simplest way to control very very hard tables or collections.
 - Does not store in memory previously used models for diff calculation
 - Using one `cellModel` for `tableView` or `collectionView`
 
-##Getting Started
+## Getting Started
 
-###Model
+### Model
 
 Make some models
 
@@ -59,7 +59,7 @@ extension City: StructurableForTableView {
     
 }
 ```
-###ViewController
+### ViewController
 
 Implementing `viewController` with `tableView`
 
@@ -113,5 +113,3 @@ class TableViewController: UIViewController {
 
 ```
 **Done!**
-
-##Detailed Usage
