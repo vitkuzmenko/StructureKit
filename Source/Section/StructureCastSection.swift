@@ -8,11 +8,11 @@
 
 import Foundation
 
-struct StructureOldSection {
+struct StructureCastSection {
     
     let identifier: AnyHashable
     
-    let rows: [StructureOldItem]
+    var rows: [StructurableCast]
     
     let headerContentHasher: Hasher?
     
@@ -20,13 +20,13 @@ struct StructureOldSection {
     
 }
 
-extension StructureOldSection: Equatable {
-    static func == (lhs: StructureOldSection, rhs: StructureOldSection) -> Bool {
+extension StructureCastSection: Equatable {
+    static func == (lhs: StructureCastSection, rhs: StructureCastSection) -> Bool {
         return lhs.identifier == rhs.identifier
     }
 }
 
-extension Sequence where Iterator.Element == StructureOldSection {
+extension Sequence where Iterator.Element == StructureCastSection {
     
     func indexPath(of identifyHasher: Hasher) -> IndexPath? {
         for (index, section) in enumerated() {

@@ -37,7 +37,9 @@ final public class StructureController: NSObject {
     
     public var structure: [StructureSection] = []
     
-    private var previousStructure: [StructureOldSection] = [] {
+    internal var structureCast: [StructureCastSection] = []
+    
+    private var previousStructure: [StructureCastSection] = [] {
         didSet {
             structure.forEach { section in
                 section.rows.forEach { object in
@@ -57,6 +59,16 @@ final public class StructureController: NSObject {
     public func cellModel(at indexPath: IndexPath) -> Any? {
         if structure.count - 1 >= indexPath.section {
             let section = structure[indexPath.section]
+            if section.rows.count - 1 >= indexPath.row {
+                return section.rows[indexPath.row]
+            }
+        }
+        return nil
+    }
+    
+    internal func cellCast(at indexPath: IndexPath) -> StructurableCast? {
+        if structureCast.count - 1 >= indexPath.section {
+            let section = structureCast[indexPath.section]
             if section.rows.count - 1 >= indexPath.row {
                 return section.rows[indexPath.row]
             }
@@ -123,10 +135,11 @@ final public class StructureController: NSObject {
     // MARK: - Sctructure Updating
     
     public func set(structure newStructure: [StructureSection]) {
-        guard let StructureView = structureView else { fatalError("StructureView is not configured") }
-        previousStructure = structure.old(for: StructureView)
+        guard let structureView = structureView else { fatalError("StructureView is not configured") }
+        previousStructure = structureCast
+        structureCast = newStructure.cast(for: structureView)
         structure = newStructure
-        switch StructureView {
+        switch structureView {
         case .tableView(let tableView):
             set(structure: newStructure, to: tableView)
         case .collectionView(let collectionView):

@@ -107,12 +107,12 @@ extension Sequence where Iterator.Element == StructureSection {
     
     // MARK: - Converting to old strcuture
     
-    func old(for structureView: StructureView) -> [StructureOldSection] {
+    func cast(for structureView: StructureView) -> [StructureCastSection] {
         return map { oldSection in
             return .init(
                 identifier: oldSection.identifier,
                 rows: oldSection.rows.map { cellOld in
-                    return StructureOldItem(
+                    return StructurableCast(
                         identifyHasher: (cellOld as? StructurableIdentifable)?.identifyHasher(for: structureView),
                         contentHasher: (cellOld as? StructurableContentIdentifable)?.contentHasher()
                     )

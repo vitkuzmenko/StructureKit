@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct StructureOldItem {
+struct StructurableCast {
     
     let identifyHasher: Hasher?
     

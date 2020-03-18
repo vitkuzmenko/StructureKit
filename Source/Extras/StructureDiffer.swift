@@ -46,7 +46,7 @@ class StructureDiffer {
     
     var rowsToReload: [IndexPath] = []
     
-    init(from oldStructure: [StructureOldSection], to newStructure: [StructureSection], StructureView: StructureView) throws {
+    init(from oldStructure: [StructureCastSection], to newStructure: [StructureSection], StructureView: StructureView) throws {
         
         for (oldSectionIndex, oldSection) in oldStructure.enumerated() {
             

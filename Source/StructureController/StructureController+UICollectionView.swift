@@ -135,9 +135,13 @@ extension StructureController: UICollectionViewDataSource {
     
     @available(iOS 9.0, *)
     public func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        if let model = cellModel(at: sourceIndexPath) as? StructurableMovable, let sModel = cellModel(at: sourceIndexPath) as? Structurable {
+        if let model = cellModel(at: sourceIndexPath) as? StructurableMovable,
+            let sModel = cellModel(at: sourceIndexPath) as? Structurable,
+            let castModel = cellCast(at: sourceIndexPath) {
             structure[sourceIndexPath.section].rows.remove(at: sourceIndexPath.item)
             structure[destinationIndexPath.section].rows.insert(sModel, at: destinationIndexPath.item)
+            structureCast[sourceIndexPath.section].rows.remove(at: sourceIndexPath.item)
+            structureCast[destinationIndexPath.section].rows.insert(castModel, at: destinationIndexPath.item)
             model.didMove?(sourceIndexPath, destinationIndexPath)
         }
     }
