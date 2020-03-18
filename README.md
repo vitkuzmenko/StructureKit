@@ -15,6 +15,12 @@ StructureKit is an simplest way to control very very hard tables or collections.
 
 ## Getting Started
 
+### Installation
+
+```ruby
+pod 'StructureKit'
+```
+
 ### Model
 
 Make some models
