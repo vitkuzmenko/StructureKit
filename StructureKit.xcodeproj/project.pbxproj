@@ -18,6 +18,22 @@
 		793CA98C2422BAC8001D7015 /* StructureSectionHeaderFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9802422BAC8001D7015 /* StructureSectionHeaderFooter.swift */; };
 		793CA98D2422BAC8001D7015 /* StructureDiffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9822422BAC8001D7015 /* StructureDiffer.swift */; };
 		793CA98E2422BAC8001D7015 /* TableAnimationRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9832422BAC8001D7015 /* TableAnimationRule.swift */; };
+		793CA99D2422BE73001D7015 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA99C2422BE73001D7015 /* AppDelegate.swift */; };
+		793CA99F2422BE73001D7015 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA99E2422BE73001D7015 /* ViewController.swift */; };
+		793CA9A22422BE73001D7015 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 793CA9A02422BE73001D7015 /* Main.storyboard */; };
+		793CA9A42422BE75001D7015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 793CA9A32422BE75001D7015 /* Assets.xcassets */; };
+		793CA9A72422BE75001D7015 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 793CA9A52422BE75001D7015 /* LaunchScreen.storyboard */; };
+		793CA9AC2422BE96001D7015 /* StructureCastSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9752422BAC8001D7015 /* StructureCastSection.swift */; };
+		793CA9AD2422BE96001D7015 /* StructureSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9762422BAC8001D7015 /* StructureSection.swift */; };
+		793CA9AE2422BE96001D7015 /* StructureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9782422BAC8001D7015 /* StructureController.swift */; };
+		793CA9AF2422BE96001D7015 /* StructureController+UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9792422BAC8001D7015 /* StructureController+UITableView.swift */; };
+		793CA9B02422BE96001D7015 /* StructureController+UICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA97A2422BAC8001D7015 /* StructureController+UICollectionView.swift */; };
+		793CA9B12422BE96001D7015 /* StructureController+UIScrollViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA97B2422BAC8001D7015 /* StructureController+UIScrollViewDelegate.swift */; };
+		793CA9B22422BE96001D7015 /* StructurableCast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA97D2422BAC8001D7015 /* StructurableCast.swift */; };
+		793CA9B32422BE96001D7015 /* Structurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA97E2422BAC8001D7015 /* Structurable.swift */; };
+		793CA9B42422BE96001D7015 /* StructureSectionHeaderFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9802422BAC8001D7015 /* StructureSectionHeaderFooter.swift */; };
+		793CA9B52422BE96001D7015 /* StructureDiffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9822422BAC8001D7015 /* StructureDiffer.swift */; };
+		793CA9B62422BE96001D7015 /* TableAnimationRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CA9832422BAC8001D7015 /* TableAnimationRule.swift */; };
 		7960B2AC239636DA00DC71B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7960B2AB239636DA00DC71B0 /* AppDelegate.swift */; };
 		7960B2B0239636DA00DC71B0 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7960B2AF239636DA00DC71B0 /* TableViewController.swift */; };
 		7960B2B3239636DA00DC71B0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7960B2B1239636DA00DC71B0 /* Main.storyboard */; };
@@ -54,6 +70,13 @@
 		793CA9802422BAC8001D7015 /* StructureSectionHeaderFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructureSectionHeaderFooter.swift; sourceTree = "<group>"; };
 		793CA9822422BAC8001D7015 /* StructureDiffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructureDiffer.swift; sourceTree = "<group>"; };
 		793CA9832422BAC8001D7015 /* TableAnimationRule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableAnimationRule.swift; sourceTree = "<group>"; };
+		793CA99A2422BE73001D7015 /* AppleTv.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppleTv.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		793CA99C2422BE73001D7015 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		793CA99E2422BE73001D7015 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		793CA9A12422BE73001D7015 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		793CA9A32422BE75001D7015 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		793CA9A62422BE75001D7015 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		793CA9A82422BE75001D7015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7960B2A8239636DA00DC71B0 /* StructureKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StructureKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7960B2AB239636DA00DC71B0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7960B2AF239636DA00DC71B0 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
@@ -81,6 +104,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		793CA9972422BE73001D7015 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7960B2A5239636DA00DC71B0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -149,11 +179,25 @@
 			path = Extras;
 			sourceTree = "<group>";
 		};
+		793CA99B2422BE73001D7015 /* AppleTv */ = {
+			isa = PBXGroup;
+			children = (
+				793CA99C2422BE73001D7015 /* AppDelegate.swift */,
+				793CA99E2422BE73001D7015 /* ViewController.swift */,
+				793CA9A02422BE73001D7015 /* Main.storyboard */,
+				793CA9A32422BE75001D7015 /* Assets.xcassets */,
+				793CA9A52422BE75001D7015 /* LaunchScreen.storyboard */,
+				793CA9A82422BE75001D7015 /* Info.plist */,
+			);
+			path = AppleTv;
+			sourceTree = "<group>";
+		};
 		7960B29F239636DA00DC71B0 = {
 			isa = PBXGroup;
 			children = (
 				7960B2AA239636DA00DC71B0 /* StructureKit */,
 				793CA9732422BAC8001D7015 /* Source */,
+				793CA99B2422BE73001D7015 /* AppleTv */,
 				7960B2A9239636DA00DC71B0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -162,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				7960B2A8239636DA00DC71B0 /* StructureKit.app */,
+				793CA99A2422BE73001D7015 /* AppleTv.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -295,6 +340,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		793CA9992422BE73001D7015 /* AppleTv */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 793CA9AB2422BE75001D7015 /* Build configuration list for PBXNativeTarget "AppleTv" */;
+			buildPhases = (
+				793CA9962422BE73001D7015 /* Sources */,
+				793CA9972422BE73001D7015 /* Frameworks */,
+				793CA9982422BE73001D7015 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AppleTv;
+			productName = AppleTv;
+			productReference = 793CA99A2422BE73001D7015 /* AppleTv.app */;
+			productType = "com.apple.product-type.application";
+		};
 		7960B2A7239636DA00DC71B0 /* StructureKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7960B2BC239636DC00DC71B0 /* Build configuration list for PBXNativeTarget "StructureKit" */;
@@ -321,6 +383,9 @@
 				LastSwiftUpdateCheck = 1120;
 				LastUpgradeCheck = 1120;
 				TargetAttributes = {
+					793CA9992422BE73001D7015 = {
+						CreatedOnToolsVersion = 11.2.1;
+					};
 					7960B2A7239636DA00DC71B0 = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
@@ -340,11 +405,22 @@
 			projectRoot = "";
 			targets = (
 				7960B2A7239636DA00DC71B0 /* StructureKit */,
+				793CA9992422BE73001D7015 /* AppleTv */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		793CA9982422BE73001D7015 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				793CA9A72422BE75001D7015 /* LaunchScreen.storyboard in Resources */,
+				793CA9A42422BE75001D7015 /* Assets.xcassets in Resources */,
+				793CA9A22422BE73001D7015 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7960B2A6239636DA00DC71B0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -362,6 +438,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		793CA9962422BE73001D7015 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				793CA9B42422BE96001D7015 /* StructureSectionHeaderFooter.swift in Sources */,
+				793CA9B62422BE96001D7015 /* TableAnimationRule.swift in Sources */,
+				793CA9AC2422BE96001D7015 /* StructureCastSection.swift in Sources */,
+				793CA99F2422BE73001D7015 /* ViewController.swift in Sources */,
+				793CA99D2422BE73001D7015 /* AppDelegate.swift in Sources */,
+				793CA9AD2422BE96001D7015 /* StructureSection.swift in Sources */,
+				793CA9B52422BE96001D7015 /* StructureDiffer.swift in Sources */,
+				793CA9B12422BE96001D7015 /* StructureController+UIScrollViewDelegate.swift in Sources */,
+				793CA9AE2422BE96001D7015 /* StructureController.swift in Sources */,
+				793CA9B22422BE96001D7015 /* StructurableCast.swift in Sources */,
+				793CA9AF2422BE96001D7015 /* StructureController+UITableView.swift in Sources */,
+				793CA9B02422BE96001D7015 /* StructureController+UICollectionView.swift in Sources */,
+				793CA9B32422BE96001D7015 /* Structurable.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7960B2A4239636DA00DC71B0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -398,6 +494,22 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		793CA9A02422BE73001D7015 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				793CA9A12422BE73001D7015 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		793CA9A52422BE75001D7015 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				793CA9A62422BE75001D7015 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
 		7960B2B1239636DA00DC71B0 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -417,6 +529,44 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		793CA9A92422BE75001D7015 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = AppleTv/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = info.kuzmenko.AppleTv;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		793CA9AA2422BE75001D7015 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = AppleTv/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = info.kuzmenko.AppleTv;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
 		7960B2BA239636DC00DC71B0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -572,6 +722,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		793CA9AB2422BE75001D7015 /* Build configuration list for PBXNativeTarget "AppleTv" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				793CA9A92422BE75001D7015 /* Debug */,
+				793CA9AA2422BE75001D7015 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7960B2A3239636DA00DC71B0 /* Build configuration list for PBXProject "StructureKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

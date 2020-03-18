@@ -252,6 +252,8 @@ public protocol StructurableDeletable {
 
 // MARK: - Swipe Actions
 
+#if os(iOS)
+
 @available(iOS 11.0, *)
 public protocol StructurableSwipable {
     
@@ -260,6 +262,8 @@ public protocol StructurableSwipable {
     var trailingSwipeActions: UISwipeActionsConfiguration? { get }
     
 }
+
+#endif
 
 // MARK: - StructurableEditable
 
@@ -349,6 +353,8 @@ public protocol StructurableFocusable {
 
 // MARK: - StructurableSpringLoadable
 
+#if os(iOS)
+
 @available(iOS 11.0, *)
 public protocol StructurableSpringLoadable {
     
@@ -357,6 +363,8 @@ public protocol StructurableSpringLoadable {
     var shouldSpringLoad: DidBeginMultipleSelection? { get }
     
 }
+
+#endif
 
 // MARK: - StructurableIndentable
 
@@ -381,6 +389,8 @@ public protocol StructurableMultipleSelectable {
 
 // MARK: - StructurableContextualMenuConfigurable
 
+#if os(iOS)
+
 @available(iOS 13.0, *)
 public protocol StructurableContextualMenuConfigurable {
     
@@ -389,6 +399,8 @@ public protocol StructurableContextualMenuConfigurable {
     var contextMenuConfiguration: ContextMenuConfiguration? { get }
     
 }
+
+#endif
 
 // MARK: - StructurableInvalidatable
 

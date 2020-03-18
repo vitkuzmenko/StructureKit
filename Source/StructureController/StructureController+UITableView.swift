@@ -441,6 +441,8 @@ extension StructureController: UITableViewDelegate {
         }
     }
     
+    #if os(iOS)
+    
     public func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         if tableViewDelegate?.responds(to: #selector(tableView(_:titleForDeleteConfirmationButtonForRowAt:))) == true {
             return tableViewDelegate?.tableView?(tableView, titleForDeleteConfirmationButtonForRowAt: indexPath)
@@ -451,6 +453,8 @@ extension StructureController: UITableViewDelegate {
         }
     }
     
+    #endif
+    
     public func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         if tableViewDelegate?.responds(to: #selector(tableView(_:shouldIndentWhileEditingRowAt:))) == true, let shouldIndentWhileEditing = tableViewDelegate?.tableView?(tableView, shouldIndentWhileEditingRowAt: indexPath) {
             return shouldIndentWhileEditing
@@ -460,6 +464,8 @@ extension StructureController: UITableViewDelegate {
             return true
         }
     }
+    
+    #if os(iOS)
     
     public func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         if tableViewDelegate?.responds(to: #selector(tableView(_:willBeginEditingRowAt:))) == true {
@@ -500,6 +506,8 @@ extension StructureController: UITableViewDelegate {
             return nil
         }
     }
+    
+    #endif
     
     // MARK: - Moving
     
@@ -559,6 +567,8 @@ extension StructureController: UITableViewDelegate {
     }
     
     // MARK: - Spring Loading
+    
+    #if os(iOS)
     
     @available(iOS 11.0, *)
     public func tableView(_ tableView: UITableView, shouldSpringLoadRowAt indexPath: IndexPath, with context: UISpringLoadedInteractionContext) -> Bool {
@@ -637,5 +647,7 @@ extension StructureController: UITableViewDelegate {
             tableViewDelegate?.tableView?(tableView, willPerformPreviewActionForMenuWith: configuration, animator: animator)
         }
     }
+    
+    #endif
 
 }

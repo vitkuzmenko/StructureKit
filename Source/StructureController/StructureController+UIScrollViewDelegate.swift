@@ -73,6 +73,7 @@ extension StructureController {
         scrollViewDelegate?.scrollViewDidScrollToTop?(scrollView)
     }
     
+    @available(tvOS 11.0, *)
     @available(iOS 11.0, *)
     public func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
         scrollViewDelegate?.scrollViewDidChangeAdjustedContentInset?(scrollView)

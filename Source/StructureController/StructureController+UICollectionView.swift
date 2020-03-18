@@ -447,6 +447,8 @@ extension StructureController: UICollectionViewDelegate {
     
     // MARK: - Spring Loading
     
+    #if os(iOS)
+    
     @available(iOS 11.0, *)
     public func collectionView(_ collectionView: UICollectionView, shouldSpringLoadItemAt indexPath: IndexPath, with context: UISpringLoadedInteractionContext) -> Bool {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:shouldSpringLoadItemAt:with:))) == true,
@@ -526,5 +528,7 @@ extension StructureController: UICollectionViewDelegate {
             collectionViewDelegate?.collectionView?(collectionView, willPerformPreviewActionForMenuWith: configuration, animator: animator)
         }
     }
+    
+    #endif
 
 }

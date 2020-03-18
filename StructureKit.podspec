@@ -5,8 +5,8 @@ Pod::Spec.new do |s |
     s.homepage = "https://github.com/vitkuzmenko/StructureKit.git"
     
     s.license = {
-      : type => "Apache 2.0",
-      : file => "LICENSE"
+      :type => "Apache 2.0",
+      :file => "LICENSE"
     }
     s.author = {
       "Vitaliy" => "kuzmenko.v.u@gmail.com"
@@ -17,10 +17,10 @@ Pod::Spec.new do |s |
     s.tvos.deployment_target = '9.0'
     
     s.source = {
-      : git => s.homepage,
-      : tag => s.version.to_s
+      :git => s.homepage,
+      :tag => s.version.to_s
     }
     s.source_files = "Source/**/*.swift"
-    s.requires_arc = 'true'
     
+    s.swift_version = '5.0'
 end
