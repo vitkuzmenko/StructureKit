@@ -148,7 +148,7 @@ final public class StructureController: NSObject {
     }
     
     internal func set(structure newStructure: [StructureSection], to tableView: UITableView) {
-        guard !previousStructure.isEmpty else {
+        guard !previousStructure.isEmpty && structure(in: tableView, isEqualTo: previousStructure) else {
             return tableView.reloadData()
         }
         switch tableAnimationRule {
@@ -156,7 +156,7 @@ final public class StructureController: NSObject {
             tableView.reloadData()
         default:
             do {
-                let diff = try StructureDiffer(from: previousStructure, to: structure, StructureView: .tableView(tableView))
+                let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .tableView(tableView))
                 performTableViewReload(tableView, diff: diff, with: tableAnimationRule)
             } catch let error {
                 NSLog("StructureController: Can not reload animated. %@", error.localizedDescription)
@@ -166,12 +166,12 @@ final public class StructureController: NSObject {
     }
     
     internal func set(structure newStructure: [StructureSection], to collectionView: UICollectionView) {
-        guard !previousStructure.isEmpty else {
+        guard !previousStructure.isEmpty && structure(in: collectionView, isEqualTo: previousStructure) else {
             return collectionView.reloadData()
         }
         if collectionViewReloadAnimated {
             do {
-                let diff = try StructureDiffer(from: previousStructure, to: structure, StructureView: .collectionView(collectionView))
+                let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .collectionView(collectionView))
                 performCollectionViewReload(collectionView, diff: diff)
             } catch let error {
                 NSLog("StructureController: Can not reload animated. %@", error.localizedDescription)
@@ -180,6 +180,30 @@ final public class StructureController: NSObject {
         } else {
             collectionView.reloadData()
         }
+    }
+    
+    private func structure(in tableView: UITableView, isEqualTo previousStructure: [StructureCastSection]) -> Bool {
+        if tableView.numberOfSections != previousStructure.count {
+            return false
+        }
+        for (index, section) in previousStructure.enumerated() {
+            if tableView.numberOfRows(inSection: index) != section.rows.count {
+                return false
+            }
+        }
+        return true
+    }
+    
+    private func structure(in collectionView: UICollectionView, isEqualTo previousStructure: [StructureCastSection]) -> Bool {
+        if collectionView.numberOfSections != previousStructure.count {
+            return false
+        }
+        for (index, section) in previousStructure.enumerated() {
+            if collectionView.numberOfItems(inSection: index) != section.rows.count {
+                return false
+            }
+        }
+        return true
     }
         
 }
