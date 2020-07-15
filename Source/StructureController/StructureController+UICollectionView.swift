@@ -37,7 +37,16 @@ extension StructureController {
             
         }, completion: { _ in
             
-            guard hasher.finalize() == self.currentCollectionReloadingHasher?.finalize() else { return }
+            guard !self.shouldReload else {
+                collectionView.reloadData()
+                self.shouldReload = false
+                return
+            }
+            
+            guard hasher.finalize() == self.currentCollectionReloadingHasher?.finalize() else {
+                self.shouldReload = true
+                return
+            }
             
             if !diff.rowsToReload.isEmpty {
                 collectionView.reloadItems(at: diff.rowsToReload)

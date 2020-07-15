@@ -33,6 +33,8 @@ final public class StructureController: NSObject {
     
     internal var currentCollectionReloadingHasher: Hasher?
     
+    internal var shouldReload: Bool = false
+    
     // MARK: - Structure
     
     public var structure: [StructureSection] = []
