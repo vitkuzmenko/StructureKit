@@ -56,6 +56,7 @@
 		7960B35A2398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7960B3582398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.swift */; };
 		7960B35B2398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7960B3592398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.xib */; };
 		7960B35D23990AF200DC71B0 /* Country+StructureTableSectionHeaderFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7960B35C23990AF200DC71B0 /* Country+StructureTableSectionHeaderFooter.swift */; };
+		79916B0124C7797C00A0A2DD /* CollectionAnimationRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79916B0024C7797C00A0A2DD /* CollectionAnimationRule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -101,6 +102,7 @@
 		7960B3582398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountrySectionHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		7960B3592398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CountrySectionHeaderCollectionReusableView.xib; sourceTree = "<group>"; };
 		7960B35C23990AF200DC71B0 /* Country+StructureTableSectionHeaderFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Country+StructureTableSectionHeaderFooter.swift"; sourceTree = "<group>"; };
+		79916B0024C7797C00A0A2DD /* CollectionAnimationRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionAnimationRule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +177,7 @@
 			children = (
 				793CA9822422BAC8001D7015 /* StructureDiffer.swift */,
 				793CA9832422BAC8001D7015 /* TableAnimationRule.swift */,
+				79916B0024C7797C00A0A2DD /* CollectionAnimationRule.swift */,
 			);
 			path = Extras;
 			sourceTree = "<group>";
@@ -476,6 +479,7 @@
 				7960B2FA239638E000DC71B0 /* CountryTableHeaderView.swift in Sources */,
 				793CA98D2422BAC8001D7015 /* StructureDiffer.swift in Sources */,
 				7960B2B0239636DA00DC71B0 /* TableViewController.swift in Sources */,
+				79916B0124C7797C00A0A2DD /* CollectionAnimationRule.swift in Sources */,
 				793CA9842422BAC8001D7015 /* StructureCastSection.swift in Sources */,
 				7960B2FD239638E000DC71B0 /* Country.swift in Sources */,
 				7960B3542398ED7600DC71B0 /* CitiesStructureBuilder.swift in Sources */,

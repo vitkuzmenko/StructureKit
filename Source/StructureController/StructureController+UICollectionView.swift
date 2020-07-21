@@ -10,7 +10,7 @@ import UIKit
 
 extension StructureController {
     
-    internal func performCollectionViewReload(_ collectionView: UICollectionView, diff: StructureDiffer) {
+    internal func performCollectionViewReload(_ collectionView: UICollectionView, diff: StructureDiffer, animation: CollectionAnimationRule) {
             
         var hasher = Hasher()
         hasher.combine(Date())
@@ -49,7 +49,15 @@ extension StructureController {
             }
             
             if !diff.rowsToReload.isEmpty {
+                if !animation.update {
+                    UIView.setAnimationsEnabled(false)
+                }
+                
                 collectionView.reloadItems(at: diff.rowsToReload)
+                
+                if !animation.update {
+                    UIView.setAnimationsEnabled(true)
+                }
             }
             
             if !diff.sectionHeadersToReload.isEmpty {

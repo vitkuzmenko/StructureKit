@@ -9,7 +9,7 @@
 import UIKit
 
 public struct TableAnimationRule: Equatable {
-    let insert, delete, reload: UITableView.RowAnimation
+    public let insert, delete, reload: UITableView.RowAnimation
 }
 
 extension TableAnimationRule {

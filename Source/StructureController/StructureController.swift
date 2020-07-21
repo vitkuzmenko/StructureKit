@@ -29,7 +29,7 @@ final public class StructureController: NSObject {
     
     internal weak var collectionViewDelegate: UICollectionViewDelegate?
     
-    public var collectionViewReloadAnimated: Bool = true
+    public var collectionAnimationRule: CollectionAnimationRule = .animated
     
     internal var currentCollectionReloadingHasher: Hasher?
     
@@ -106,13 +106,13 @@ final public class StructureController: NSObject {
         }
     }
     
-    public func register(_ collectionView: UICollectionView, cellModelTypes: [Structurable.Type] = [], reusableSupplementaryViewTypes: [String: [StructureSectionHeaderFooter.Type]] = [:], reloadAnimated: Bool = true, collectionViewDelegate: UICollectionViewDelegate? = nil) {
+    public func register(_ collectionView: UICollectionView, cellModelTypes: [Structurable.Type] = [], reusableSupplementaryViewTypes: [String: [StructureSectionHeaderFooter.Type]] = [:], animationRule: CollectionAnimationRule = .animated, collectionViewDelegate: UICollectionViewDelegate? = nil) {
         
         if self.structureView != nil {
             fatalError("StructureController: Registration may be once per StructureController instance")
         }
         
-        self.collectionViewReloadAnimated = reloadAnimated
+        self.collectionAnimationRule = animationRule
         self.structureView = .collectionView(collectionView)
         self.collectionViewDelegate = collectionViewDelegate
         
@@ -171,10 +171,10 @@ final public class StructureController: NSObject {
         guard !previousStructure.isEmpty && structure(in: collectionView, isEqualTo: previousStructure) else {
             return collectionView.reloadData()
         }
-        if collectionViewReloadAnimated {
+        if collectionAnimationRule.enabled {
             do {
                 let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .collectionView(collectionView))
-                performCollectionViewReload(collectionView, diff: diff)
+                performCollectionViewReload(collectionView, diff: diff, animation: collectionAnimationRule)
             } catch let error {
                 NSLog("StructureController: Can not reload animated. %@", error.localizedDescription)
                 collectionView.reloadData()
