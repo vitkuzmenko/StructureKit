@@ -10,6 +10,12 @@ import UIKit
 
 public struct TableAnimationRule: Equatable {
     public let insert, delete, reload: UITableView.RowAnimation
+    
+    public init(insert: UITableView.RowAnimation, delete: UITableView.RowAnimation, reload: UITableView.RowAnimation) {
+        self.insert = insert
+        self.delete = delete
+        self.reload = reload
+    }
 }
 
 extension TableAnimationRule {
