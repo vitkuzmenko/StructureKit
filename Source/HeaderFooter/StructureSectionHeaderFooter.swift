@@ -16,6 +16,8 @@ public protocol StructureSectionHeaderFooter {
     
     static func reuseIdentifierForCollectionReusableSupplementaryView() -> String
     
+    static func bundleForNib() -> Bundle?
+    
     func _configure(tableViewHeaderFooterView view: UITableViewHeaderFooterView, isUpdating: Bool)
     
     func _configure(collectionViewReusableSupplementaryView view: UICollectionReusableView, isUpdating: Bool)
@@ -30,6 +32,10 @@ public extension StructureSectionHeaderFooter {
     
     static func reuseIdentifierForCollectionReusableSupplementaryView() -> String {
         fatalError("Structurable: You should implement method reuseIdentifierForCollectionView")
+    }
+    
+    static func bundleForNib() -> Bundle? {
+        return nil
     }
     
     func _configure(tableViewHeaderFooterView view: UITableViewHeaderFooterView, isUpdating: Bool) {

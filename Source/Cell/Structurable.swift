@@ -16,6 +16,10 @@ public protocol Structurable {
     
     static func reuseIdentifierForCollectionView() -> String
     
+    static func bundleForTableViewCell() -> Bundle?
+    
+    static func bundleForCollectionViewCell() -> Bundle?
+    
     func _configure(tableViewCell cell: UITableViewCell)
     
     func _configure(collectionViewCell cell: UICollectionViewCell)
@@ -30,6 +34,14 @@ public extension Structurable {
     
     static func reuseIdentifierForCollectionView() -> String {
         fatalError("Structurable: You should implement method reuseIdentifierForCollectionView")
+    }
+    
+    static func bundleForTableViewCell() -> Bundle? {
+        fatalError("Structurable: You should implement method bundleForTableViewCell")
+    }
+    
+    static func bundleForCollectionViewCell() -> Bundle? {
+        fatalError("Structurable: You should implement method bundleForCollectionViewCell")
     }
     
     func _configure(tableViewCell cell: UITableViewCell) {
@@ -49,6 +61,8 @@ public protocol StructurableForTableView: Structurable {
     associatedtype TableViewCellType: UITableViewCell
     
     static func reuseIdentifierForTableView() -> String
+    
+    static func bundleForTableViewCell() -> Bundle?
     
     func configure(tableViewCell cell: TableViewCellType)
     
@@ -72,6 +86,10 @@ public extension StructurableForTableView {
         return String(describing: tableViewCellType)
     }
     
+    static func bundleForTableViewCell() -> Bundle? {
+        return nil
+    }
+    
 }
 
 // MARK: - StructurableForCollectionView
@@ -81,6 +99,8 @@ public protocol StructurableForCollectionView: Structurable {
     associatedtype CollectionViewCellType: UICollectionViewCell
     
     static func reuseIdentifierForCollectionView() -> String
+    
+    static func bundleForCollectionViewCell() -> Bundle?
     
     func configure(collectionViewCell cell: CollectionViewCellType)
     
@@ -98,6 +118,10 @@ public extension StructurableForCollectionView {
         } else {
             assertionFailure("StructurableForTableView: cell should be \(String(describing: CollectionViewCellType.self))")
         }
+    }
+    
+    static func bundleForCollectionViewCell() -> Bundle? {
+        return nil
     }
     
     static func reuseIdentifierForCollectionView() -> String {

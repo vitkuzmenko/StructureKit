@@ -95,13 +95,13 @@ final public class StructureController: NSObject {
         
         cellModelTypes.forEach { type in
             let identifier = type.reuseIdentifierForTableView()
-            let nib = UINib(nibName: identifier, bundle: nil)
+            let nib = UINib(nibName: identifier, bundle: type.bundleForTableViewCell())
             tableView.register(nib, forCellReuseIdentifier: identifier)
         }
         
         headerFooterModelTypes.forEach { type in
             let identifier = type.reuseIdentifierForTableViewHeaderFooter()
-            let nib = UINib(nibName: identifier, bundle: nil)
+            let nib = UINib(nibName: identifier, bundle: type.bundleForNib())
             tableView.register(nib, forHeaderFooterViewReuseIdentifier: identifier)
         }
     }
@@ -121,14 +121,14 @@ final public class StructureController: NSObject {
         
         cellModelTypes.forEach { type in
             let identifier = type.reuseIdentifierForCollectionView()
-            let nib = UINib(nibName: identifier, bundle: nil)
+            let nib = UINib(nibName: identifier, bundle: type.bundleForCollectionViewCell())
             collectionView.register(nib, forCellWithReuseIdentifier: identifier)
         }
         
         reusableSupplementaryViewTypes.forEach { kind, types in
             types.forEach { type in
                 let identifier = type.reuseIdentifierForCollectionReusableSupplementaryView()
-                let nib = UINib(nibName: identifier, bundle: nil)
+                let nib = UINib(nibName: identifier, bundle: type.bundleForNib())
                 collectionView.register(nib, forSupplementaryViewOfKind: kind, withReuseIdentifier: identifier)
             }
         }
