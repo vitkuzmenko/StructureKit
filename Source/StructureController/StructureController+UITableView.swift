@@ -373,16 +373,16 @@ extension StructureController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
         if tableViewDelegate?.responds(to: #selector(tableView(_:didHighlightRowAt:))) == true {
             tableViewDelegate?.tableView?(tableView, didHighlightRowAt: indexPath)
-        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
-            object.didHighlight?()
+        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable, let cell = tableView.cellForRow(at: indexPath) {
+            object.didHighlight?(cell)
         }
     }
 
     public func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
         if tableViewDelegate?.responds(to: #selector(tableView(_:didUnhighlightRowAt:))) == true {
             tableViewDelegate?.tableView?(tableView, didUnhighlightRowAt: indexPath)
-        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
-            object.didUnhighlight?()
+        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable, let cell = tableView.cellForRow(at: indexPath) {
+            object.didUnhighlight?(cell)
         }
     }
 
