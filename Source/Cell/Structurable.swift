@@ -199,9 +199,9 @@ public protocol StructurableAccessoryButtonTappable {
 
 public protocol StructurableHighlightable {
     
-    typealias DidHighlight = (UIView?) -> Void
+    typealias DidHighlight = (UIView) -> Void
     
-    typealias DidUnhighlight = (UIView?) -> Void
+    typealias DidUnhighlight = (UIView) -> Void
     
     var shouldHighlight: Bool { get }
     
