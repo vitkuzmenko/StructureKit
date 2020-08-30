@@ -269,16 +269,16 @@ extension StructureController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didHighlightItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didHighlightItemAt: indexPath)
-        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
-            object.didHighlight?()
+        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable, let cell = collectionView.cellForItem(at: indexPath) {
+            object.didHighlight?(cell)
         }
     }
 
     public func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         if collectionViewDelegate?.responds(to: #selector(collectionView(_:didUnhighlightItemAt:))) == true {
             collectionViewDelegate?.collectionView?(collectionView, didUnhighlightItemAt: indexPath)
-        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable {
-            object.didUnhighlight?()
+        } else if let object = self.cellModel(at: indexPath) as? StructurableHighlightable, let cell = collectionView.cellForItem(at: indexPath) {
+            object.didUnhighlight?(cell)
         }
     }
     
