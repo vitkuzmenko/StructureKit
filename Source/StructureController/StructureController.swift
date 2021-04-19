@@ -138,9 +138,6 @@ final public class StructureController: NSObject {
     
     public func set(structure newStructure: [StructureSection]) {
         guard let structureView = structureView else { fatalError("StructureView is not configured") }
-        previousStructure = structureCast
-        structureCast = newStructure.cast(for: structureView)
-        structure = newStructure
         switch structureView {
         case .tableView(let tableView):
             set(structure: newStructure, to: tableView)
@@ -150,14 +147,18 @@ final public class StructureController: NSObject {
     }
     
     internal func set(structure newStructure: [StructureSection], to tableView: UITableView) {
-        guard !previousStructure.isEmpty && structure(in: tableView, isEqualTo: previousStructure) else {
-            return tableView.reloadData()
-        }
         switch tableAnimationRule {
         case .none:
+            structure = newStructure
             tableView.reloadData()
         default:
             do {
+                previousStructure = structureCast
+                structureCast = newStructure.cast(for: structureView)
+                structure = newStructure
+                guard !previousStructure.isEmpty && structure(in: tableView, isEqualTo: previousStructure) else {
+                    return tableView.reloadData()
+                }
                 let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .tableView(tableView))
                 performTableViewReload(tableView, diff: diff, with: tableAnimationRule)
             } catch let error {
@@ -168,11 +169,14 @@ final public class StructureController: NSObject {
     }
     
     internal func set(structure newStructure: [StructureSection], to collectionView: UICollectionView) {
-        guard !previousStructure.isEmpty && structure(in: collectionView, isEqualTo: previousStructure) else {
-            return collectionView.reloadData()
-        }
         if collectionAnimationRule.enabled {
             do {
+                previousStructure = structureCast
+                structureCast = newStructure.cast(for: structureView)
+                structure = newStructure
+                guard !previousStructure.isEmpty && structure(in: collectionView, isEqualTo: previousStructure) else {
+                    return collectionView.reloadData()
+                }
                 let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .collectionView(collectionView))
                 performCollectionViewReload(collectionView, diff: diff, animation: collectionAnimationRule)
             } catch let error {
@@ -180,6 +184,7 @@ final public class StructureController: NSObject {
                 collectionView.reloadData()
             }
         } else {
+            structure = newStructure
             collectionView.reloadData()
         }
     }
