@@ -72,7 +72,7 @@ Implementing `viewController` with `tableView`
 ```swift
 class TableViewController: UIViewController {
 
-	var countries: [Country] = []
+    var countries: [Country] = []
 
     @IBOutlet var tableView: UITableView!
     
@@ -89,8 +89,8 @@ class TableViewController: UIViewController {
     func loadCountries() {
         // some data loading
         self.countries = [
-        	Country(title: "USA", cities: [City(title: "New York"), City(title: "Los Angeles"), City(title: "Cupertino")]),
-        	Country(title: "Russia", cities: [City(title: "Moscow"), City(title: "Rostov-on-Don"), City(title: "Yeysk")])
+            Country(title: "USA", cities: [City(title: "New York"), City(title: "Los Angeles"), City(title: "Cupertino")]),
+            Country(title: "Russia", cities: [City(title: "Moscow"), City(title: "Rostov-on-Don"), City(title: "Yeysk")])
         ]
     }
     
