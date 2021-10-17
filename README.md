@@ -28,13 +28,13 @@ Make some models
 ```swift
 // City will be used as cell
 struct City {
-	let title: String
+    let title: String
 }
 
 // Country will be used as section
 struct Country {
-	let title: String
-	let cities: [City]
+    let title: String
+    let cities: [City]
 }
 ```
 
