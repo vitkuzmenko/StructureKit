@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import StructureKit
 
 struct City: Hashable {
     

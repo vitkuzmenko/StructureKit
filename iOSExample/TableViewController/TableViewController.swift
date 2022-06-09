@@ -6,27 +6,28 @@
 //
 
 import UIKit
+import StructureKit
 
-class CollectionViewController: UIViewController {
+class TableViewController: UIViewController {
 
-    @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var tableView: UITableView!
     
     let structureController = StructureController()
+    
+    let collectionController = StructureController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        configureCollectionView()
+        configureTableView()
         makeStructure()
     }
     
-    func configureCollectionView() {
-        structureController.register(collectionView, cellModelTypes: [
+    func configureTableView() {
+        structureController.register(tableView, cellModelTypes: [
             City.self
-        ], reusableSupplementaryViewTypes: [
-            UICollectionView.elementKindSectionHeader: [
-                Country.self
-            ]
+        ], headerFooterModelTypes: [
+            Country.self
         ])
     }
     

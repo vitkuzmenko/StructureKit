@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StructureKit
 
 extension Country: StructureTableSectionHeaderFooter {
     

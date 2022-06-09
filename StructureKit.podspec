@@ -20,7 +20,7 @@ Pod::Spec.new do |s |
       :git => s.homepage,
       :tag => s.version.to_s
     }
-    s.source_files = "Source/**/*.swift"
+    s.source_files = "Sources/**/*.swift"
     
     s.swift_version = '5.0'
 end
