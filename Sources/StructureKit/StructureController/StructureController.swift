@@ -57,7 +57,21 @@ final public class StructureController: NSObject {
         let objectIdentifyHasher = object.identifyHasher(for: structureView)
         return structure.indexPath(of: objectIdentifyHasher, StructureView: structureView)?.indexPath
     }
-        
+    
+    public func header(at section: Int) -> StructureSection.HeaderFooter? {
+        if structure.indices.contains(section) {
+            return structure[section].header
+        }
+        return nil
+    }
+    
+    public func footer(at section: Int) -> StructureSection.HeaderFooter? {
+        if structure.indices.contains(section) {
+            return structure[section].footer
+        }
+        return nil
+    }
+    
     public func cellModel(at indexPath: IndexPath) -> Any? {
         if structure.count - 1 >= indexPath.section {
             let section = structure[indexPath.section]

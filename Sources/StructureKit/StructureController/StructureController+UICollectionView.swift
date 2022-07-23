@@ -368,9 +368,9 @@ extension StructureController: UICollectionViewDelegate {
             let entity: StructureSection.HeaderFooter?
             switch elementKind {
             case UICollectionView.elementKindSectionHeader:
-                entity = structure[indexPath.section].header
+                entity = header(at: indexPath.section)
             case UICollectionView.elementKindSectionFooter:
-                entity = structure[indexPath.section].footer
+                entity = footer(at: indexPath.section)
             default:
                 entity = nil
             }
