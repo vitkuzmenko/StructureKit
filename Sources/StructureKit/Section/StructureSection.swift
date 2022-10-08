@@ -95,7 +95,7 @@ extension Sequence where Iterator.Element == StructureSection {
             }
             
             if let row = firstIndex, let cellModel = section.rows[row] as? StructurableIdentifable {
-                return (IndexPath(row: row, section: index), cellModel)
+                return (IndexPath(item: row, section: index), cellModel)
             }
         }
         return nil

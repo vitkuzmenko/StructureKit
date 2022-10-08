@@ -6,6 +6,7 @@
 //  Copyright © 2019 Vitaliy Kuzmenko. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS)
 import UIKit
 
 extension StructureController {
@@ -81,3 +82,4 @@ extension StructureController {
     
 }
 
+#endif

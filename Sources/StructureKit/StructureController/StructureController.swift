@@ -6,11 +6,35 @@
 //  Copyright © 2016 Vitaliy Kuzmenko. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS)
 import UIKit
+#elseif os(macOS)
+import Cocoa
+#endif
+
+#if os(iOS) || os(tvOS)
+public typealias NativeView = UIView
+public typealias NativeTableView = UITableView
+public typealias NativeTableViewCell = UITableViewCell
+public typealias NativeTableViewDelegate = UITableViewDelegate
+
+public typealias NativeCollectionView = UICollectionView
+public typealias NativeCollectionViewCell = UICollectionViewCell
+public typealias NativeCollectionViewDelegate = UICollectionViewDelegate
+#elseif os(macOS)
+public typealias NativeView = NSView
+public typealias NativeTableView = NSTableView
+public typealias NativeTableViewCell = NSView
+public typealias NativeTableViewDelegate = NSTableViewDelegate
+
+public typealias NativeCollectionView = NSCollectionView
+public typealias NativeCollectionViewCell = NSCollectionViewItem
+public typealias NativeCollectionViewDelegate = NSCollectionViewDelegate
+#endif
 
 public enum StructureView {
-    case tableView(UITableView)
-    case collectionView(UICollectionView)
+    case tableView(NativeTableView)
+    case collectionView(NativeCollectionView)
 }
 
 final public class StructureController: NSObject {
@@ -19,7 +43,7 @@ final public class StructureController: NSObject {
     
     // MARK: - TableView Parameters
     
-    internal weak var tableViewDelegate: UITableViewDelegate?
+    internal weak var tableViewDelegate: NativeTableViewDelegate?
     
     public var tableAnimationRule: TableAnimationRule = .fade
     
@@ -27,7 +51,7 @@ final public class StructureController: NSObject {
     
     // MARK: - CollectionView Parameters
     
-    internal weak var collectionViewDelegate: UICollectionViewDelegate?
+    internal weak var collectionViewDelegate: NativeCollectionViewDelegate?
     
     public var collectionAnimationRule: CollectionAnimationRule = .animated
     
@@ -75,8 +99,8 @@ final public class StructureController: NSObject {
     public func cellModel(at indexPath: IndexPath) -> Any? {
         if structure.count - 1 >= indexPath.section {
             let section = structure[indexPath.section]
-            if section.rows.count - 1 >= indexPath.row {
-                return section.rows[indexPath.row]
+            if section.rows.count - 1 >= indexPath.item {
+                return section.rows[indexPath.item]
             }
         }
         return nil
@@ -85,8 +109,8 @@ final public class StructureController: NSObject {
     internal func cellCast(at indexPath: IndexPath) -> StructurableCast? {
         if structureCast.count - 1 >= indexPath.section {
             let section = structureCast[indexPath.section]
-            if section.rows.count - 1 >= indexPath.row {
-                return section.rows[indexPath.row]
+            if section.rows.count - 1 >= indexPath.item {
+                return section.rows[indexPath.item]
             }
         }
         return nil
@@ -94,7 +118,9 @@ final public class StructureController: NSObject {
     
     // MARK: - Registration
     
-    public func register(_ tableView: UITableView, cellModelTypes: [Structurable.Type] = [], headerFooterModelTypes: [StructureSectionHeaderFooter.Type] = [], animationRule: TableAnimationRule = .fade, tableViewDelegate: UITableViewDelegate? = nil) {
+#if os(iOS) || os(tvOS)
+    
+    public func register(_ tableView: NativeTableView, cellModelTypes: [Structurable.Type] = [], headerFooterModelTypes: [StructureSectionHeaderFooter.Type] = [], animationRule: TableAnimationRule = .fade, tableViewDelegate: NativeTableViewDelegate? = nil) {
         
         if self.structureView != nil {
             fatalError("StructureController: Registration may be once per StructureController instance")
@@ -120,7 +146,9 @@ final public class StructureController: NSObject {
         }
     }
     
-    public func register(_ collectionView: UICollectionView, cellModelTypes: [Structurable.Type] = [], reusableSupplementaryViewTypes: [String: [StructureSectionHeaderFooter.Type]] = [:], animationRule: CollectionAnimationRule = .animated, collectionViewDelegate: UICollectionViewDelegate? = nil) {
+#endif
+    
+    public func register(_ collectionView: NativeCollectionView, cellModelTypes: [Structurable.Type] = [], reusableSupplementaryViewTypes: [String: [StructureSectionHeaderFooter.Type]] = [:], animationRule: CollectionAnimationRule = .animated, collectionViewDelegate: NativeCollectionViewDelegate? = nil) {
         
         if self.structureView != nil {
             fatalError("StructureController: Registration may be once per StructureController instance")
@@ -135,15 +163,25 @@ final public class StructureController: NSObject {
         
         cellModelTypes.forEach { type in
             let identifier = type.reuseIdentifierForCollectionView()
+            #if os(iOS) || os(tvOS)
             let nib = UINib(nibName: identifier, bundle: type.bundleForCollectionViewCell())
             collectionView.register(nib, forCellWithReuseIdentifier: identifier)
+            #elseif os(macOS)
+            let nib = NSNib(nibNamed: NSNib.Name.init(identifier), bundle: type.bundleForCollectionViewCell())
+            collectionView.register(nib, forItemWithIdentifier: NSUserInterfaceItemIdentifier(identifier))
+            #endif
         }
         
         reusableSupplementaryViewTypes.forEach { kind, types in
             types.forEach { type in
                 let identifier = type.reuseIdentifierForCollectionReusableSupplementaryView()
+                #if os(iOS) || os(tvOS)
                 let nib = UINib(nibName: identifier, bundle: type.bundleForNib())
                 collectionView.register(nib, forSupplementaryViewOfKind: kind, withReuseIdentifier: identifier)
+                #elseif os(macOS)
+                let nib = NSNib(nibNamed: NSNib.Name.init(identifier), bundle: type.bundleForNib())
+                collectionView.register(nib, forSupplementaryViewOfKind: kind, withIdentifier: NSUserInterfaceItemIdentifier(identifier))
+                #endif
             }
         }
     }
@@ -160,13 +198,14 @@ final public class StructureController: NSObject {
         }
     }
     
-    internal func set(structure newStructure: [StructureSection], to tableView: UITableView) {
+    internal func set(structure newStructure: [StructureSection], to tableView: NativeTableView) {
         switch tableAnimationRule {
         case .none:
             structure = newStructure
             tableView.reloadData()
         default:
             do {
+#if os(iOS) || os(tvOS)
                 previousStructure = structureCast
                 structureCast = newStructure.cast(for: structureView)
                 structure = newStructure
@@ -174,7 +213,9 @@ final public class StructureController: NSObject {
                     return tableView.reloadData()
                 }
                 let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .tableView(tableView))
+
                 performTableViewReload(tableView, diff: diff, with: tableAnimationRule)
+#endif
             } catch let error {
                 NSLog("StructureController: Can not reload animated. %@", error.localizedDescription)
                 tableView.reloadData()
@@ -182,7 +223,7 @@ final public class StructureController: NSObject {
         }
     }
     
-    internal func set(structure newStructure: [StructureSection], to collectionView: UICollectionView) {
+    internal func set(structure newStructure: [StructureSection], to collectionView: NativeCollectionView) {
         if collectionAnimationRule.enabled {
             do {
                 previousStructure = structureCast
@@ -203,7 +244,8 @@ final public class StructureController: NSObject {
         }
     }
     
-    private func structure(in tableView: UITableView, isEqualTo previousStructure: [StructureCastSection]) -> Bool {
+#if os(iOS) || os(tvOS)
+    private func structure(in tableView: NativeTableView, isEqualTo previousStructure: [StructureCastSection]) -> Bool {
         if tableView.numberOfSections != previousStructure.count {
             return false
         }
@@ -214,8 +256,9 @@ final public class StructureController: NSObject {
         }
         return true
     }
+#endif
     
-    private func structure(in collectionView: UICollectionView, isEqualTo previousStructure: [StructureCastSection]) -> Bool {
+    private func structure(in collectionView: NativeCollectionView, isEqualTo previousStructure: [StructureCastSection]) -> Bool {
         if collectionView.numberOfSections != previousStructure.count {
             return false
         }

@@ -6,12 +6,23 @@
 //  Copyright © 2019 Vitaliy Kuzmenko. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS)
 import UIKit
+#elseif os(macOS)
+import Cocoa
+#endif
+
+#if os(iOS) || os(tvOS)
+public typealias NativeAnimation = UITableView.RowAnimation
+#elseif os(macOS)
+public typealias NativeAnimation = NSTableView.AnimationOptions
+#endif
 
 public struct TableAnimationRule: Equatable {
-    public let insert, delete, reload: UITableView.RowAnimation
     
-    public init(insert: UITableView.RowAnimation, delete: UITableView.RowAnimation, reload: UITableView.RowAnimation) {
+    public let insert, delete, reload: NativeAnimation
+    
+    public init(insert: NativeAnimation, delete: NativeAnimation, reload: NativeAnimation) {
         self.insert = insert
         self.delete = delete
         self.reload = reload
@@ -19,6 +30,8 @@ public struct TableAnimationRule: Equatable {
 }
 
 extension TableAnimationRule {
+
+#if os(iOS) || os(tvOS)
     
     public static let fade = TableAnimationRule(insert: .fade, delete: .fade, reload: .fade)
 
@@ -35,5 +48,21 @@ extension TableAnimationRule {
     public static let middle = TableAnimationRule(insert: .middle, delete: .middle, reload: .middle)
 
     public static let automatic = TableAnimationRule(insert: .automatic, delete: .automatic, reload: .automatic)
+    
+#elseif os(macOS)
+
+    public static let fade = TableAnimationRule(insert: .effectFade, delete: .effectFade, reload: .effectFade)
+    
+    public static let right = TableAnimationRule(insert: .slideRight, delete: .slideRight, reload: .slideRight)
+    
+    public static let left = TableAnimationRule(insert: .slideLeft, delete: .slideLeft, reload: .slideLeft)
+    
+    public static let top = TableAnimationRule(insert: .slideUp, delete: .slideUp, reload: .slideUp)
+    
+    public static let bottom = TableAnimationRule(insert: .slideDown, delete: .slideDown, reload: .slideDown)
+    
+    public static let none = TableAnimationRule(insert: .effectFade, delete: .effectFade, reload: .effectFade)
+    
+#endif
     
 }

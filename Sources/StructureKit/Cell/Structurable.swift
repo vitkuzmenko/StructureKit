@@ -6,7 +6,11 @@
 //  Copyright © 2019 Vitaliy Kuzmenko. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS)
 import UIKit
+#elseif os(macOS)
+import Cocoa
+#endif
 
 // MARK: - Structurable
 
@@ -20,9 +24,9 @@ public protocol Structurable {
     
     static func bundleForCollectionViewCell() -> Bundle?
     
-    func _configure(tableViewCell cell: UITableViewCell)
+    func _configure(tableViewCell cell: NativeTableViewCell)
     
-    func _configure(collectionViewCell cell: UICollectionViewCell)
+    func _configure(collectionViewCell cell: NativeCollectionViewCell)
     
 }
 
@@ -44,11 +48,11 @@ public extension Structurable {
         fatalError("Structurable: You should implement method bundleForCollectionViewCell")
     }
     
-    func _configure(tableViewCell cell: UITableViewCell) {
+    func _configure(tableViewCell cell: NativeTableViewCell) {
         fatalError("Structurable: You should implement method _configure(tableViewCell:)")
     }
     
-    func _configure(collectionViewCell cell: UICollectionViewCell) {
+    func _configure(collectionViewCell cell: NativeCollectionViewCell) {
         fatalError("Structurable: You should implement method _configure(collectionViewCell:)")
     }
     
@@ -58,7 +62,7 @@ public extension Structurable {
 
 public protocol StructurableForTableView: Structurable {
     
-    associatedtype TableViewCellType: UITableViewCell
+    associatedtype TableViewCellType: NativeTableViewCell
     
     static func reuseIdentifierForTableView() -> String
     
@@ -70,11 +74,11 @@ public protocol StructurableForTableView: Structurable {
 
 public extension StructurableForTableView {
     
-    static var tableViewCellType: UIView.Type {
+    static var tableViewCellType: NativeView.Type {
         return TableViewCellType.self
     }
         
-    func _configure(tableViewCell cell: UITableViewCell) {
+    func _configure(tableViewCell cell: NativeTableViewCell) {
         if let cell = cell as? TableViewCellType {
             configure(tableViewCell: cell)
         } else {
@@ -96,7 +100,7 @@ public extension StructurableForTableView {
 
 public protocol StructurableForCollectionView: Structurable {
     
-    associatedtype CollectionViewCellType: UICollectionViewCell
+    associatedtype CollectionViewCellType: NativeCollectionViewCell
     
     static func reuseIdentifierForCollectionView() -> String
     
@@ -108,11 +112,11 @@ public protocol StructurableForCollectionView: Structurable {
 
 public extension StructurableForCollectionView {
     
-    static var collectionViewCellType: UIView.Type {
+    static var collectionViewCellType: CollectionViewCellType.Type {
         return CollectionViewCellType.self
     }
     
-    func _configure(collectionViewCell cell: UICollectionViewCell) {
+    func _configure(collectionViewCell cell: NativeCollectionViewCell) {
         if let cell = cell as? CollectionViewCellType {
             configure(collectionViewCell: cell)
         } else {
@@ -177,7 +181,7 @@ extension StructurableContentIdentifable {
 
 public protocol StructurableHeightable {
     
-    func height(for tableView: UITableView) -> CGFloat
+    func height(for tableView: NativeTableView) -> CGFloat
     
 }
 
@@ -185,13 +189,13 @@ public protocol StructurableHeightable {
 
 public protocol StructurableSizable {
     
-    func size(for parentView: UICollectionView) -> CGSize
+    func size(for parentView: NativeCollectionView) -> CGSize
     
 }
 
 public protocol StructurableAccessoryButtonTappable {
     
-    typealias AccessoryButtonTappedAction = (UITableViewCell?) -> Void
+    typealias AccessoryButtonTappedAction = (NativeTableViewCell?) -> Void
     
     var accessoryButtonTapped: AccessoryButtonTappedAction? { get }
     
@@ -199,9 +203,9 @@ public protocol StructurableAccessoryButtonTappable {
 
 public protocol StructurableHighlightable {
     
-    typealias DidHighlight = (UIView) -> Void
+    typealias DidHighlight = (NativeView) -> Void
     
-    typealias DidUnhighlight = (UIView) -> Void
+    typealias DidUnhighlight = (NativeView) -> Void
     
     var shouldHighlight: Bool { get }
     
@@ -215,14 +219,22 @@ public protocol StructurableHighlightable {
 
 public protocol StructurableSelectable {
     
-    typealias WillSelect = (UIView?) -> IndexPath?
+    typealias WillSelect = (NativeView?) -> IndexPath?
     
-    typealias WillDeselect = (UIView?) -> IndexPath?
+    typealias WillDeselect = (NativeView?) -> IndexPath?
     
+    #if os(iOS) || os(tvOS)
     /// return nil -> no deselction. return true -> deselect animted. return false -> deselect without animation
-    typealias DidSelect = (UIView?) -> Bool?
+    typealias DidSelect = (NativeView?) -> Bool?
     
-    typealias DidDeselect = (UIView?) -> Void
+    typealias DidDeselect = (NativeView?) -> Void
+    #elseif os(macOS)
+    
+    typealias DidSelect = () -> Bool?
+    
+    typealias DidDeselect = () -> Void
+    
+    #endif
     
     // Applicable for collectionView only
     var shouldSelect: Bool { get }
@@ -291,9 +303,11 @@ public protocol StructurableSwipable {
 
 // MARK: - StructurableEditable
 
+#if os(iOS) || os(tvOS)
+
 public protocol StructurableEditable {
         
-    typealias CommitEditing = (UITableViewCell.EditingStyle) -> Void
+    typealias CommitEditing = (NativeTableViewCell.EditingStyle) -> Void
     
     typealias WillBeginEditing = () -> Void
     
@@ -301,7 +315,7 @@ public protocol StructurableEditable {
     
     var canEdit: Bool { get }
 
-    var editingStyle: UITableViewCell.EditingStyle { get }
+    var editingStyle: NativeTableViewCell.EditingStyle { get }
     
     var shouldIndentWhileEditing: Bool { get }
 
@@ -329,13 +343,15 @@ public extension StructurableEditable {
     
 }
 
+#endif
+
 // MARK: - StructureViewWillDisplay
 
 public protocol StructurableDisplayable {
     
-    typealias WillDisplay = (UIView) -> Void
+    typealias WillDisplay = (NativeView) -> Void
     
-    typealias DidEndDisplay = (UIView) -> Void
+    typealias DidEndDisplay = (NativeView) -> Void
     
     var willDisplay: WillDisplay? { get }
     

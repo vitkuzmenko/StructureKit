@@ -73,7 +73,7 @@ class StructureDiffer {
             
             for (oldRowIndex, oldRow) in oldSection.rows.enumerated() {
                 var skipForContentUpdater = false
-                let oldIndexPath = IndexPath(row: oldRowIndex, section: oldSectionIndex)
+                let oldIndexPath = IndexPath(item: oldRowIndex, section: oldSectionIndex)
                 if let rowIdentifyHasher = oldRow.identifyHasher, let newRow = newStructure.indexPath(of: rowIdentifyHasher, StructureView: StructureView) {
                     let newRowIndexPath = newRow.indexPath
                     if oldIndexPath != newRowIndexPath {
@@ -115,7 +115,7 @@ class StructureDiffer {
                 if let newRowIdentifable = newRow as? StructurableIdentifable, oldStructure.contains(Structure: newRowIdentifable.identifyHasher(for: StructureView)) {
                     // nothing
                 } else {
-                    rowsToInsert.append(IndexPath(row: newRowIndex, section: newSectionIndex))
+                    rowsToInsert.append(IndexPath(item: newRowIndex, section: newSectionIndex))
                 }
             }
         }

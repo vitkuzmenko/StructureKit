@@ -37,7 +37,7 @@ extension Sequence where Iterator.Element == StructureCastSection {
             }
             
             if let row = firstIndex {
-                return IndexPath(row: row, section: index)
+                return IndexPath(item: row, section: index)
             }
         }
         return nil

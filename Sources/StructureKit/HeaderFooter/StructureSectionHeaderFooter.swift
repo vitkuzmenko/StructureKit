@@ -6,7 +6,19 @@
 //  Copyright © 2019 Vitaliy Kuzmenko. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS)
 import UIKit
+#elseif os(macOS)
+import Cocoa
+#endif
+
+#if os(iOS) || os(tvOS)
+public typealias NativeTableViewHeaderFooterView = UITableViewHeaderFooterView
+public typealias NativeCollectionReusableView = UICollectionReusableView
+#elseif os(macOS)
+public typealias NativeTableViewHeaderFooterView = NSView
+public typealias NativeCollectionReusableView = NSView
+#endif
 
 // MARK: - StructureSectionHeaderFooter
 
@@ -18,9 +30,9 @@ public protocol StructureSectionHeaderFooter {
     
     static func bundleForNib() -> Bundle?
     
-    func _configure(tableViewHeaderFooterView view: UITableViewHeaderFooterView, isUpdating: Bool)
+    func _configure(tableViewHeaderFooterView view: NativeTableViewHeaderFooterView, isUpdating: Bool)
     
-    func _configure(collectionViewReusableSupplementaryView view: UICollectionReusableView, isUpdating: Bool)
+    func _configure(collectionViewReusableSupplementaryView view: NativeCollectionReusableView, isUpdating: Bool)
     
 }
 
@@ -38,11 +50,11 @@ public extension StructureSectionHeaderFooter {
         return nil
     }
     
-    func _configure(tableViewHeaderFooterView view: UITableViewHeaderFooterView, isUpdating: Bool) {
+    func _configure(tableViewHeaderFooterView view: NativeTableViewHeaderFooterView, isUpdating: Bool) {
         fatalError("Structurable: You should implement method _configure(tableViewHeaderFooterView:isUpdating:")
     }
     
-    func _configure(collectionViewReusableSupplementaryView view: UICollectionReusableView, isUpdating: Bool) {
+    func _configure(collectionViewReusableSupplementaryView view: NativeCollectionReusableView, isUpdating: Bool) {
         fatalError("Structurable: You should implement method _configure(collectionViewHeaderFooterView:isUpdating:)")
     }
     
@@ -52,7 +64,7 @@ public extension StructureSectionHeaderFooter {
 
 public protocol StructureTableSectionHeaderFooter: StructureSectionHeaderFooter {
     
-    associatedtype TableViewHeaderFooterType: UITableViewHeaderFooterView
+    associatedtype TableViewHeaderFooterType: NativeTableViewHeaderFooterView
     
     static func reuseIdentifierForTableViewHeaderFooter() -> String
     
@@ -62,11 +74,11 @@ public protocol StructureTableSectionHeaderFooter: StructureSectionHeaderFooter 
 
 public extension StructureTableSectionHeaderFooter {
     
-    static var tableViewCellType: UITableViewHeaderFooterView.Type {
+    static var tableViewCellType: NativeTableViewHeaderFooterView.Type {
         return TableViewHeaderFooterType.self
     }
         
-    func _configure(tableViewHeaderFooterView view: UITableViewHeaderFooterView, isUpdating: Bool) {
+    func _configure(tableViewHeaderFooterView view: NativeTableViewHeaderFooterView, isUpdating: Bool) {
         if let view = view as? TableViewHeaderFooterType {
             configure(tableViewHeaderFooterView: view, isUpdating: isUpdating)
         } else {
@@ -84,7 +96,7 @@ public extension StructureTableSectionHeaderFooter {
 
 public protocol StructureCollectionSectionHeaderFooter: StructureSectionHeaderFooter {
     
-    associatedtype CollectionViewHeaderFooterType: UICollectionReusableView
+    associatedtype CollectionViewHeaderFooterType: NativeCollectionReusableView
     
     static func reuseIdentifierForCollectionReusableSupplementaryView() -> String
     
@@ -94,11 +106,11 @@ public protocol StructureCollectionSectionHeaderFooter: StructureSectionHeaderFo
 
 public extension StructureCollectionSectionHeaderFooter {
     
-    static var collectionViewCellType: UICollectionReusableView.Type {
+    static var collectionViewCellType: NativeCollectionReusableView.Type {
         return CollectionViewHeaderFooterType.self
     }
         
-    func _configure(collectionViewReusableSupplementaryView view: UICollectionReusableView, isUpdating: Bool) {
+    func _configure(collectionViewReusableSupplementaryView view: NativeCollectionReusableView, isUpdating: Bool) {
         if let view = view as? CollectionViewHeaderFooterType {
             configure(collectionViewReusableSupplementaryView: view, isUpdating: isUpdating)
         } else {
