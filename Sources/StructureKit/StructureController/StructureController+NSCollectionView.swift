@@ -36,6 +36,8 @@ extension StructureController {
             
             collectionView.insertItems(at: Set(diff.rowsToInsert))
             
+            collectionView.reloadItems(at: Set(diff.rowsToReload))
+            
         }, completionHandler: { _ in
             
             guard !self.shouldReload else {
@@ -47,12 +49,6 @@ extension StructureController {
             guard hasher.finalize() == self.currentCollectionReloadingHasher?.finalize() else {
                 self.shouldReload = true
                 return
-            }
-            
-            if !diff.rowsToReload.isEmpty {
-                
-                collectionView.reloadItems(at: Set(diff.rowsToReload))
-
             }
             
             if !diff.sectionHeadersToReload.isEmpty {

@@ -75,7 +75,7 @@
 		7960B3582398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountrySectionHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		7960B3592398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CountrySectionHeaderCollectionReusableView.xib; sourceTree = "<group>"; };
 		7960B35C23990AF200DC71B0 /* Country+StructureTableSectionHeaderFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Country+StructureTableSectionHeaderFooter.swift"; sourceTree = "<group>"; };
-		79E9879228F17A3500004EAD /* StructureKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = StructureKit; sourceTree = "<group>"; };
+		79A6286828F21AB3001E59C3 /* StructureKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = StructureKit; sourceTree = "<group>"; };
 		79E9879728F17ABB00004EAD /* macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79E9879928F17ABB00004EAD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79E9879B28F17ABB00004EAD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -283,7 +283,7 @@
 		79AAA7BF28528B000008B158 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				79E9879228F17A3500004EAD /* StructureKit */,
+				79A6286828F21AB3001E59C3 /* StructureKit */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
