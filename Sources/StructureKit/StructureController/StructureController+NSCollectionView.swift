@@ -18,26 +18,26 @@ extension StructureController {
         
         currentCollectionReloadingHasher = hasher
         
-        collectionView.performBatchUpdates({
+        collectionView.animator().performBatchUpdates({
             
             for movement in diff.sectionsToMove {
-                collectionView.animator().moveSection(movement.from, toSection: movement.to)
+                collectionView.moveSection(movement.from, toSection: movement.to)
             }
             
-            collectionView.animator().deleteSections(diff.sectionsToDelete)
+            collectionView.deleteSections(diff.sectionsToDelete)
             
-            collectionView.animator().insertSections(diff.sectionsToInsert)
+            collectionView.insertSections(diff.sectionsToInsert)
             
             for movement in diff.rowsToMove {
-                collectionView.animator().moveItem(at: movement.from, to: movement.to)
+                collectionView.moveItem(at: movement.from, to: movement.to)
             }
             
-            collectionView.animator().deleteItems(at: Set(diff.rowsToDelete))
+            collectionView.deleteItems(at: Set(diff.rowsToDelete))
             
-            collectionView.animator().insertItems(at: Set(diff.rowsToInsert))
+            collectionView.insertItems(at: Set(diff.rowsToInsert))
             
             if animation.update {
-                collectionView.animator().reloadItems(at: Set(diff.rowsToReload))
+                collectionView.reloadItems(at: Set(diff.rowsToReload))
             } else {
                 collectionView.reloadItems(at: Set(diff.rowsToReload))
             }
