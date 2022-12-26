@@ -21,22 +21,26 @@ extension StructureController {
         collectionView.performBatchUpdates({
             
             for movement in diff.sectionsToMove {
-                collectionView.moveSection(movement.from, toSection: movement.to)
+                collectionView.animator().moveSection(movement.from, toSection: movement.to)
             }
             
-            collectionView.deleteSections(diff.sectionsToDelete)
+            collectionView.animator().deleteSections(diff.sectionsToDelete)
             
-            collectionView.insertSections(diff.sectionsToInsert)
+            collectionView.animator().insertSections(diff.sectionsToInsert)
             
             for movement in diff.rowsToMove {
-                collectionView.moveItem(at: movement.from, to: movement.to)
+                collectionView.animator().moveItem(at: movement.from, to: movement.to)
             }
             
-            collectionView.deleteItems(at: Set(diff.rowsToDelete))
+            collectionView.animator().deleteItems(at: Set(diff.rowsToDelete))
             
-            collectionView.insertItems(at: Set(diff.rowsToInsert))
+            collectionView.animator().insertItems(at: Set(diff.rowsToInsert))
             
-            collectionView.reloadItems(at: Set(diff.rowsToReload))
+            if animation.update {
+                collectionView.animator().reloadItems(at: Set(diff.rowsToReload))
+            } else {
+                collectionView.reloadItems(at: Set(diff.rowsToReload))
+            }
             
         }, completionHandler: { _ in
             

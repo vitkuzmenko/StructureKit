@@ -75,7 +75,7 @@
 		7960B3582398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountrySectionHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		7960B3592398F8BF00DC71B0 /* CountrySectionHeaderCollectionReusableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CountrySectionHeaderCollectionReusableView.xib; sourceTree = "<group>"; };
 		7960B35C23990AF200DC71B0 /* Country+StructureTableSectionHeaderFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Country+StructureTableSectionHeaderFooter.swift"; sourceTree = "<group>"; };
-		79A6286828F21AB3001E59C3 /* StructureKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = StructureKit; sourceTree = "<group>"; };
+		79A0F25E2959849E00BE2B6F /* StructureKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = StructureKit; sourceTree = "<group>"; };
 		79E9879728F17ABB00004EAD /* macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79E9879928F17ABB00004EAD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79E9879B28F17ABB00004EAD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -128,7 +128,7 @@
 		7960B29F239636DA00DC71B0 = {
 			isa = PBXGroup;
 			children = (
-				79AAA7BF28528B000008B158 /* Packages */,
+				79A0F25D2959849E00BE2B6F /* Packages */,
 				7960B2AA239636DA00DC71B0 /* iOSExample */,
 				793CA99B2422BE73001D7015 /* AppleTv */,
 				79E9879828F17ABB00004EAD /* macOS */,
@@ -273,19 +273,19 @@
 			path = SectionHeaders;
 			sourceTree = "<group>";
 		};
+		79A0F25D2959849E00BE2B6F /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				79A0F25E2959849E00BE2B6F /* StructureKit */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		79AAA7BA285289620008B158 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		79AAA7BF28528B000008B158 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				79A6286828F21AB3001E59C3 /* StructureKit */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 		79E9879828F17ABB00004EAD /* macOS */ = {
