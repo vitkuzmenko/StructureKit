@@ -285,6 +285,59 @@ extension StructureController: NSCollectionViewDelegate {
                 }
         }
     }
+    
+    // MARK: - Drag & Drop
+    
+    public func collectionView(
+        _ collectionView: NSCollectionView,
+        canDragItemsAt indexPaths: Set<IndexPath>,
+        with event: NSEvent
+    ) -> Bool {
+        collectionViewDelegate?.collectionView(collectionView, canDragItemsAt: canDragItemsAt, with: event) ?? false
+    }
+    
+    func collectionView(
+        _ collectionView: NSCollectionView,
+        pasteboardWriterForItemAt indexPath: IndexPath
+    ) -> NSPasteboardWriting? {
+        collectionViewDelegate?.collectionView(collectionView, pasteboardWriterForItemAt: indexPath)
+    }
+    
+    func collectionView(
+        _ collectionView: NSCollectionView,
+        validateDrop draggingInfo: NSDraggingInfo,
+        proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>,
+        dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>
+    ) -> NSDragOperation {
+        collectionViewDelegate?.collectionView(collectionView, validateDrop: draggingInfo, proposedIndexPath: proposedDropOperation, dropOperation: proposedDropOperation) ?? []
+    }
+    
+    func collectionView(
+        _ collectionView: NSCollectionView,
+        acceptDrop draggingInfo: NSDraggingInfo,
+        indexPath: IndexPath,
+        dropOperation: NSCollectionView.DropOperation
+    ) -> Bool {
+        collectionViewDelegate?.collectionView(collectionView, acceptDrop: draggingInfo, indexPath: indexPath, dropOperation: dropOperation) ?? false
+    }
+    
+    func collectionView(
+        _ collectionView: NSCollectionView,
+        draggingSession session: NSDraggingSession,
+        willBeginAt screenPoint: NSPoint,
+        forItemsAt indexPaths: Set<IndexPath>
+    ) {
+        collectionViewDelegate?.collectionView(collectionView, draggingSession: session, willBeginAt: screenPoint, forItemsAt: indexPaths)
+    }
+    
+    func collectionView(
+        _ collectionView: NSCollectionView,
+        draggingSession session: NSDraggingSession,
+        endedAt screenPoint: NSPoint,
+        dragOperation operation: NSDragOperation
+    ) {
+        collectionViewDelegate?.collectionView(collectionView, draggingSession: session, endedAt: screenPoint, dragOperation: operation)
+    }
 
 }
 
