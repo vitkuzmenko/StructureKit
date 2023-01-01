@@ -293,14 +293,21 @@ extension StructureController: NSCollectionViewDelegate {
         canDragItemsAt indexPaths: Set<IndexPath>,
         with event: NSEvent
     ) -> Bool {
-        collectionViewDelegate?.collectionView(collectionView, canDragItemsAt: canDragItemsAt, with: event) ?? false
+        collectionViewDelegate?.collectionView?(
+            collectionView,
+            canDragItemsAt: indexPaths,
+            with: event
+        ) ?? false
     }
     
     public func collectionView(
         _ collectionView: NSCollectionView,
         pasteboardWriterForItemAt indexPath: IndexPath
     ) -> NSPasteboardWriting? {
-        collectionViewDelegate?.collectionView(collectionView, pasteboardWriterForItemAt: indexPath)
+        collectionViewDelegate?.collectionView?(
+            collectionView,
+            pasteboardWriterForItemAt: indexPath
+        )
     }
     
     public func collectionView(
@@ -309,7 +316,12 @@ extension StructureController: NSCollectionViewDelegate {
         proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>,
         dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>
     ) -> NSDragOperation {
-        collectionViewDelegate?.collectionView(collectionView, validateDrop: draggingInfo, proposedIndexPath: proposedDropOperation, dropOperation: proposedDropOperation) ?? []
+        collectionViewDelegate?.collectionView?(
+            collectionView,
+            validateDrop: draggingInfo,
+            proposedIndexPath: proposedDropIndexPath,
+            dropOperation: proposedDropOperation
+        ) ?? []
     }
     
     public func collectionView(
@@ -318,7 +330,12 @@ extension StructureController: NSCollectionViewDelegate {
         indexPath: IndexPath,
         dropOperation: NSCollectionView.DropOperation
     ) -> Bool {
-        collectionViewDelegate?.collectionView(collectionView, acceptDrop: draggingInfo, indexPath: indexPath, dropOperation: dropOperation) ?? false
+        collectionViewDelegate?.collectionView?(
+            collectionView,
+            acceptDrop: draggingInfo,
+            indexPath: indexPath,
+            dropOperation: dropOperation
+        ) ?? false
     }
     
     public func collectionView(
@@ -327,7 +344,12 @@ extension StructureController: NSCollectionViewDelegate {
         willBeginAt screenPoint: NSPoint,
         forItemsAt indexPaths: Set<IndexPath>
     ) {
-        collectionViewDelegate?.collectionView(collectionView, draggingSession: session, willBeginAt: screenPoint, forItemsAt: indexPaths)
+        collectionViewDelegate?.collectionView?(
+            collectionView,
+            draggingSession: session,
+            willBeginAt: screenPoint,
+            forItemsAt: indexPaths
+        )
     }
     
     public func collectionView(
@@ -336,7 +358,12 @@ extension StructureController: NSCollectionViewDelegate {
         endedAt screenPoint: NSPoint,
         dragOperation operation: NSDragOperation
     ) {
-        collectionViewDelegate?.collectionView(collectionView, draggingSession: session, endedAt: screenPoint, dragOperation: operation)
+        collectionViewDelegate?.collectionView?(
+            collectionView,
+            draggingSession: session,
+            endedAt: screenPoint,
+            dragOperation: operation
+        )
     }
 
 }
