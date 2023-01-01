@@ -296,14 +296,14 @@ extension StructureController: NSCollectionViewDelegate {
         collectionViewDelegate?.collectionView(collectionView, canDragItemsAt: canDragItemsAt, with: event) ?? false
     }
     
-    func collectionView(
+    public func collectionView(
         _ collectionView: NSCollectionView,
         pasteboardWriterForItemAt indexPath: IndexPath
     ) -> NSPasteboardWriting? {
         collectionViewDelegate?.collectionView(collectionView, pasteboardWriterForItemAt: indexPath)
     }
     
-    func collectionView(
+    public func collectionView(
         _ collectionView: NSCollectionView,
         validateDrop draggingInfo: NSDraggingInfo,
         proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>,
@@ -312,7 +312,7 @@ extension StructureController: NSCollectionViewDelegate {
         collectionViewDelegate?.collectionView(collectionView, validateDrop: draggingInfo, proposedIndexPath: proposedDropOperation, dropOperation: proposedDropOperation) ?? []
     }
     
-    func collectionView(
+    public func collectionView(
         _ collectionView: NSCollectionView,
         acceptDrop draggingInfo: NSDraggingInfo,
         indexPath: IndexPath,
@@ -321,7 +321,7 @@ extension StructureController: NSCollectionViewDelegate {
         collectionViewDelegate?.collectionView(collectionView, acceptDrop: draggingInfo, indexPath: indexPath, dropOperation: dropOperation) ?? false
     }
     
-    func collectionView(
+    public func collectionView(
         _ collectionView: NSCollectionView,
         draggingSession session: NSDraggingSession,
         willBeginAt screenPoint: NSPoint,
@@ -330,7 +330,7 @@ extension StructureController: NSCollectionViewDelegate {
         collectionViewDelegate?.collectionView(collectionView, draggingSession: session, willBeginAt: screenPoint, forItemsAt: indexPaths)
     }
     
-    func collectionView(
+    public func collectionView(
         _ collectionView: NSCollectionView,
         draggingSession session: NSDraggingSession,
         endedAt screenPoint: NSPoint,
