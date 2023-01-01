@@ -44,16 +44,16 @@ extension StructureController {
             
         }, completionHandler: { _ in
             
-            guard !self.shouldReload else {
-                collectionView.reloadData()
-                self.shouldReload = false
-                return
-            }
-            
-            guard hasher.finalize() == self.currentCollectionReloadingHasher?.finalize() else {
-                self.shouldReload = true
-                return
-            }
+//            guard !self.shouldReload else {
+//                collectionView.reloadData()
+//                self.shouldReload = false
+//                return
+//            }
+//
+//            guard hasher.finalize() == self.currentCollectionReloadingHasher?.finalize() else {
+//                self.shouldReload = true
+//                return
+//            }
             
             if !diff.sectionHeadersToReload.isEmpty {
                 diff.sectionHeadersToReload.forEach { index in
