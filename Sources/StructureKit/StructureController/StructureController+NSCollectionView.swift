@@ -293,21 +293,22 @@ extension StructureController: NSCollectionViewDelegate {
         canDragItemsAt indexPaths: Set<IndexPath>,
         with event: NSEvent
     ) -> Bool {
-        collectionViewDelegate?.collectionView?(
-            collectionView,
-            canDragItemsAt: indexPaths,
-            with: event
-        ) ?? false
+        indexPaths.count == indexPaths
+            .compactMap { cellModel(at: $0) as? StructurableMovable }
+            .map(\.canMove)
+            .filter { $0 == true }
+            .count
     }
     
     public func collectionView(
         _ collectionView: NSCollectionView,
         pasteboardWriterForItemAt indexPath: IndexPath
     ) -> NSPasteboardWriting? {
-        collectionViewDelegate?.collectionView?(
-            collectionView,
-            pasteboardWriterForItemAt: indexPath
-        )
+        if let model = cellModel(at: indexPath) as? StructurablePasteboardWritable {
+            return model.pasteboardWriting(srcIndexPath: indexPath)
+        } else {
+            return nil
+        }
     }
     
     public func collectionView(

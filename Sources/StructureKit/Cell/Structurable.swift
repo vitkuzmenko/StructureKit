@@ -372,13 +372,27 @@ public extension StructurableDisplayable {
 
 public protocol StructurableMovable {
     
-    typealias DidMove = (IndexPath, IndexPath) -> Void
-    
     var canMove: Bool { get }
+    
+#if os(iOS)
+    
+    typealias DidMove = (IndexPath, IndexPath) -> Void
     
     var didMove: DidMove? { get }
     
+#endif
+    
 }
+
+#if os(macOS)
+
+public protocol StructurablePasteboardWritable {
+ 
+    func pasteboardWriting(srcIndexPath: IndexPath) -> NSPasteboardWriting?
+    
+}
+
+#endif
 
 // MARK: - StructurableFocusable
 
