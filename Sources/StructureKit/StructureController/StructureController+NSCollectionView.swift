@@ -294,8 +294,8 @@ extension StructureController: NSCollectionViewDelegate {
         with event: NSEvent
     ) -> Bool {
         indexPaths.count == indexPaths
-            .compactMap { cellModel(at: $0) as? StructurableMovable }
-            .map(\.canMove)
+            .compactMap { cellModel(at: $0) as? StructurableDraggable }
+            .map(\.canDrag)
             .filter { $0 == true }
             .count
     }

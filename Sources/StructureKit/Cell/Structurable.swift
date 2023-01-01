@@ -370,21 +370,27 @@ public extension StructurableDisplayable {
 
 // MARK: - StructurableMovable
 
-public protocol StructurableMovable {
-    
-    var canMove: Bool { get }
-    
 #if os(iOS)
+
+public protocol StructurableMovable {
     
     typealias DidMove = (IndexPath, IndexPath) -> Void
     
-    var didMove: DidMove? { get }
+    var canMove: Bool { get }
     
-#endif
+    var didMove: DidMove? { get }
     
 }
 
+#endif
+
 #if os(macOS)
+
+public protocol StructurableDraggable {
+    
+    var canDrag: Bool { get }
+    
+}
 
 public protocol StructurablePasteboardWritable {
  
