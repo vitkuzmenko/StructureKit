@@ -229,11 +229,10 @@ final public class StructureController: NSObject {
                 previousStructure = structureCast
                 structureCast = newStructure.cast(for: structureView)
                 structure = newStructure
-                let structureInCollectionViewIsEqualToPreviousStructure = self.structure(in: collectionView, isEqualTo: previousStructure)
-                print("structureInCollectionViewIsEqualToPreviousStructure", structureInCollectionViewIsEqualToPreviousStructure)
-                if previousStructure.isEmpty || !structureInCollectionViewIsEqualToPreviousStructure {
-                    collectionView.reloadData()
-                    return
+                if previousStructure.isEmpty || !self.structure(in: collectionView, isEqualTo: previousStructure) {
+                    return DispatchQueue.main.async {
+                        collectionView.reloadData()
+                    }
                 }
                 let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .collectionView(collectionView))
                 performCollectionViewReload(collectionView, diff: diff, animation: collectionAnimationRule)
