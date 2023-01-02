@@ -230,6 +230,7 @@ final public class StructureController: NSObject {
                 structureCast = newStructure.cast(for: structureView)
                 structure = newStructure
                 let structureInCollectionViewIsEqualToPreviousStructure = self.structure(in: collectionView, isEqualTo: previousStructure)
+                print("structureInCollectionViewIsEqualToPreviousStructure", structureInCollectionViewIsEqualToPreviousStructure)
                 if previousStructure.isEmpty || !structureInCollectionViewIsEqualToPreviousStructure {
                     collectionView.reloadData()
                     return
