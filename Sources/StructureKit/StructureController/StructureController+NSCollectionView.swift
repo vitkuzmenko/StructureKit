@@ -45,6 +45,7 @@ extension StructureController {
         }, completionHandler: { _ in
             
 //            guard !self.shouldReload else {
+//                print("[StructureKit] WARNING: Reload on shouldReload")
 //                collectionView.reloadData()
 //                self.shouldReload = false
 //                return
@@ -81,11 +82,6 @@ extension StructureController {
                 }
             }
         })
-        
-        DispatchQueue.main.async {
-            
-        }
-        
     }
     
 }
