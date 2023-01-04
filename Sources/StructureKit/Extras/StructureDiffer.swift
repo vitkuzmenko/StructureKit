@@ -164,4 +164,16 @@ class StructureDiffer {
         }
     }
     
+    var isEmpty: Bool {
+        sectionsToMove.isEmpty &&
+        sectionsToDelete.isEmpty &&
+        sectionsToInsert.isEmpty &&
+        sectionHeadersToReload.isEmpty &&
+        sectionFootersToReload.isEmpty &&
+        rowsToMove.isEmpty &&
+        rowsToDelete.isEmpty &&
+        rowsToInsert.isEmpty &&
+        rowsToReload.isEmpty
+    }
+    
 }

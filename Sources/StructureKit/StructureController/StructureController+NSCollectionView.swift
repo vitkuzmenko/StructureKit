@@ -13,6 +13,10 @@ extension StructureController {
     
     internal func performCollectionViewReload(_ collectionView: NSCollectionView, diff: StructureDiffer, animation: CollectionAnimationRule) {
             
+        if diff.isEmpty {
+            return print("[StrucutreKit] ♻️ Skip reloading. StructureDiffer is empty")
+        }
+        
         var hasher = Hasher()
         hasher.combine(Date())
         

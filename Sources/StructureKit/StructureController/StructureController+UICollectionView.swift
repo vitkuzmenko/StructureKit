@@ -13,6 +13,10 @@ extension StructureController {
     
     internal func performCollectionViewReload(_ collectionView: UICollectionView, diff: StructureDiffer, animation: CollectionAnimationRule) {
             
+        if diff.isEmpty {
+            return print("[StrucutreKit] ♻️ Skip reloading. StructureDiffer is empty")
+        }
+        
         var hasher = Hasher()
         hasher.combine(Date())
         
@@ -38,16 +42,16 @@ extension StructureController {
             
         }, completion: { _ in
             
-            guard !self.shouldReload else {
-                collectionView.reloadData()
-                self.shouldReload = false
-                return
-            }
-            
-            guard hasher.finalize() == self.currentCollectionReloadingHasher?.finalize() else {
-                self.shouldReload = true
-                return
-            }
+//            guard !self.shouldReload else {
+//                collectionView.reloadData()
+//                self.shouldReload = false
+//                return
+//            }
+//
+//            guard hasher.finalize() == self.currentCollectionReloadingHasher?.finalize() else {
+//                self.shouldReload = true
+//                return
+//            }
             
             if !diff.rowsToReload.isEmpty {
                 if !animation.update {
