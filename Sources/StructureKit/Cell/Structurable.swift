@@ -349,9 +349,15 @@ public extension StructurableEditable {
 
 public protocol StructurableDisplayable {
     
-    typealias WillDisplay = (NativeView) -> Void
+    #if os(iOS)
+    typealias WillDisplay = (UIView) -> Void
     
-    typealias DidEndDisplay = (NativeView) -> Void
+    typealias DidEndDisplay = (UIView) -> Void
+    #elseif os(macOS)
+    typealias WillDisplay = (Any) -> Void
+    
+    typealias DidEndDisplay = (Any) -> Void
+    #endif
     
     var willDisplay: WillDisplay? { get }
     

@@ -286,6 +286,78 @@ extension StructureController: NSCollectionViewDelegate {
         }
     }
     
+    // MARK: - Will Display
+    
+    public func collectionView(_ collectionView: NSCollectionView, willDisplay item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:willDisplay:forRepresentedObjectAt:))) == true {
+            collectionViewDelegate?.collectionView?(collectionView, willDisplay: item, forRepresentedObjectAt: indexPath)
+        } else if let object = self.cellModel(at: indexPath) as? StructurableDisplayable {
+            object.willDisplay?(item)
+        }
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView, willDisplaySupplementaryView view: NSView, forElementKind elementKind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:willDisplaySupplementaryView:forElementKind:at:))) == true {
+            collectionViewDelegate?.collectionView?(collectionView, willDisplaySupplementaryView: view, forElementKind: elementKind, at: indexPath)
+        } else {
+            let entity: StructureSection.HeaderFooter?
+            switch elementKind {
+            case NSCollectionView.elementKindSectionHeader:
+                entity = structure[indexPath.section].header
+            case NSCollectionView.elementKindSectionFooter:
+                entity = structure[indexPath.section].footer
+            default:
+                entity = nil
+            }
+            if let entity = entity {
+                switch entity {
+                case .view(let viewModel):
+                    if let viewModel = viewModel as? StructurableDisplayable {
+                        viewModel.willDisplay?(view)
+                    }
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView, didEndDisplayingSupplementaryView view: NSView, forElementOfKind elementKind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:didEndDisplayingSupplementaryView:forElementOfKind:at:))) == true {
+            collectionViewDelegate?.collectionView?(collectionView, didEndDisplayingSupplementaryView: view, forElementOfKind: elementKind, at: indexPath)
+        } else {
+            let entity: StructureSection.HeaderFooter?
+            switch elementKind {
+            case NSCollectionView.elementKindSectionHeader:
+                entity = header(at: indexPath.section)
+            case NSCollectionView.elementKindSectionFooter:
+                entity = footer(at: indexPath.section)
+            default:
+                entity = nil
+            }
+            if let entity = entity {
+                switch entity {
+                case .view(let viewModel):
+                    if let viewModel = viewModel as? StructurableDisplayable {
+                        viewModel.didEndDisplay?(view)
+                    }
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    // MARK: - Did End Display
+    
+    public func collectionView(_ collectionView: NSCollectionView, didEndDisplaying item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
+        if collectionViewDelegate?.responds(to: #selector(collectionView(_:didEndDisplaying:forRepresentedObjectAt:))) == true {
+            collectionViewDelegate?.collectionView?(collectionView, didEndDisplaying: item, forRepresentedObjectAt: indexPath)
+        } else if let object = self.cellModel(at: indexPath) as? StructurableDisplayable {
+            object.didEndDisplay?(item)
+        }
+    }
+    
     // MARK: - Drag & Drop
     
     public func collectionView(
