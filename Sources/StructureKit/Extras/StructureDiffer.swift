@@ -136,6 +136,10 @@ class StructureDiffer {
             throw DifferenceError.insertion
         }
         
+        rowsToInsert = rowsToInsert.filter { indexPath in
+            !sectionsToInsert.contains(indexPath.section)
+        }
+        
         var uniqueSections: [StructureSection] = []
         
         for newSection in newStructure {
