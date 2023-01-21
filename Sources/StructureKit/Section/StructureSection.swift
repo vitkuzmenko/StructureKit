@@ -22,9 +22,16 @@ public struct StructureSection {
     
     public var rows: [Structurable] = []
     
-    public init(identifier: AnyHashable, rows: [Structurable] = []) {
+    public init(
+        identifier: AnyHashable,
+        header: HeaderFooter? = nil,
+        rows: [Structurable] = [],
+        footer: HeaderFooter? = nil
+    ) {
         self.identifier = identifier
+        self.header = header
         self.rows = rows
+        self.footer = footer
     }
     
     public mutating func append(_ object: Structurable) {
