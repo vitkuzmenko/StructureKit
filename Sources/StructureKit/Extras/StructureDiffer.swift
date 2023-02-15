@@ -8,7 +8,7 @@
 
 import Foundation
 
-class StructureDiffer {
+class StructureDiffer: CustomStringConvertible {
     
     enum DifferenceError: Error, LocalizedError {
         
@@ -178,6 +178,20 @@ class StructureDiffer {
         rowsToDelete.isEmpty &&
         rowsToInsert.isEmpty &&
         rowsToReload.isEmpty
+    }
+    
+    var description: String {
+        [
+            "CYCLE_NOTE - sectionsToMove \(sectionsToMove.description)",
+            "CYCLE_NOTE - sectionsToDelete \(sectionsToDelete.description)",
+            "CYCLE_NOTE - sectionsToInsert \(sectionsToInsert.description)",
+            "CYCLE_NOTE - sectionHeadersToReload \(sectionHeadersToReload.description)",
+            "CYCLE_NOTE - sectionFootersToReload \(sectionFootersToReload.description)",
+            "CYCLE_NOTE - rowsToMove \(rowsToMove.description)",
+            "CYCLE_NOTE - rowsToDelete \(rowsToDelete.description)",
+            "CYCLE_NOTE - rowsToInsert \(rowsToInsert.description)",
+            "CYCLE_NOTE - rowsToReload \(rowsToReload.description)",
+        ].joined(separator: "\n")
     }
     
 }

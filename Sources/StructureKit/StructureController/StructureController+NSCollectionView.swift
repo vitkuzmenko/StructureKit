@@ -27,11 +27,11 @@ extension StructureController {
             for movement in diff.sectionsToMove {
                 collectionView.moveSection(movement.from, toSection: movement.to)
             }
-            
+
             collectionView.deleteSections(diff.sectionsToDelete)
-            
+
             collectionView.insertSections(diff.sectionsToInsert)
-            
+
             for movement in diff.rowsToMove {
                 collectionView.moveItem(at: movement.from, to: movement.to)
             }
@@ -40,11 +40,9 @@ extension StructureController {
             
             collectionView.insertItems(at: Set(diff.rowsToInsert))
             
-            if animation.update {
-                collectionView.reloadItems(at: Set(diff.rowsToReload))
-            } else {
-                collectionView.reloadItems(at: Set(diff.rowsToReload))
-            }
+            collectionView.reloadItems(at: Set(diff.rowsToReload))
+            
+            print(diff)
             
         }, completionHandler: { _ in
             
