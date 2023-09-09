@@ -5,6 +5,8 @@
 //  Created by Vitaliy Kuzmenko on 02.08.2022.
 //
 
+#if os(iOS) || os(tvOS) || os(macOS)
+
 import Foundation
 
 protocol StructurableView {
@@ -14,3 +16,5 @@ protocol StructurableView {
     func reuse(for viewModel: ViewModel)
     
 }
+
+#endif

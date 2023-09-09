@@ -6,6 +6,8 @@
 //  Copyright © 2019 Vitaliy Kuzmenko. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS) || os(macOS)
+
 import Foundation
 
 struct StructurableCast {
@@ -15,3 +17,5 @@ struct StructurableCast {
     let contentHasher: Hasher?
     
 }
+
+#endif

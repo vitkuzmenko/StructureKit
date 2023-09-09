@@ -6,13 +6,15 @@
 //  Copyright © 2016 Vitaliy Kuzmenko. All rights reserved.
 //
 
-#if os(iOS) || os(tvOS) || os(watchOS)
+#if os(iOS) || os(tvOS) || os(macOS)
+
+#if os(iOS) || os(tvOS)
 import UIKit
 #elseif os(macOS)
 import Cocoa
 #endif
 
-#if os(iOS) || os(tvOS) || os(watchOS)
+#if os(iOS) || os(tvOS)
 public typealias NativeView = UIView
 public typealias NativeTableView = UITableView
 public typealias NativeTableViewCell = UITableViewCell
@@ -272,3 +274,4 @@ final public class StructureController: NSObject {
         
 }
 
+#endif

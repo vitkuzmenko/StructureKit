@@ -6,7 +6,9 @@
 //  Copyright © 2019 Vitaliy Kuzmenko. All rights reserved.
 //
 
-#if os(iOS) || os(tvOS) || os(watchOS)
+#if os(iOS) || os(tvOS) || os(macOS)
+
+#if os(iOS) || os(tvOS)
 import UIKit
 #elseif os(macOS)
 import Cocoa
@@ -141,3 +143,6 @@ extension StructureSectionHeaderFooterContentIdentifable {
     }
     
 }
+
+
+#endif

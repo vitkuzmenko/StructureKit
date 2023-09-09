@@ -5,6 +5,8 @@
 //  Created by Vitaliy Kuzmenko on 21.07.2020.
 //
 
+#if os(iOS) || os(tvOS) || os(macOS)
+
 import Foundation
 
 public struct CollectionAnimationRule {
@@ -25,3 +27,6 @@ extension CollectionAnimationRule {
     // Disable update animations
     public static let disableUpdateAnimation = CollectionAnimationRule(enabled: true, update: false)
 }
+
+
+#endif

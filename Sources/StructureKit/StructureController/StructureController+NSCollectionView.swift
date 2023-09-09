@@ -7,6 +7,7 @@
 //
 
 #if os(macOS)
+
 import Cocoa
 
 extension StructureController {

@@ -6,6 +6,8 @@
 //  Copyright © 2019 Vitaliy Kuzmenko. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS) || os(macOS)
+
 import Foundation
 
 public struct StructureSection {
@@ -131,3 +133,6 @@ extension Sequence where Iterator.Element == StructureSection {
     }
     
 }
+
+
+#endif
