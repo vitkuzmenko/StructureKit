@@ -6,13 +6,13 @@
 //  Copyright © 2016 Vitaliy Kuzmenko. All rights reserved.
 //
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(watchOS)
 import UIKit
 #elseif os(macOS)
 import Cocoa
 #endif
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(watchOS)
 public typealias NativeView = UIView
 public typealias NativeTableView = UITableView
 public typealias NativeTableViewCell = UITableViewCell

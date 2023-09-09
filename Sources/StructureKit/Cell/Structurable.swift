@@ -6,7 +6,7 @@
 //  Copyright © 2019 Vitaliy Kuzmenko. All rights reserved.
 //
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(watchOS)
 import UIKit
 #elseif os(macOS)
 import Cocoa
