@@ -25,10 +25,6 @@ extension StructureController {
             
             guard hasher.finalize() == self.currentTableReloadingHasher?.finalize() else { return }
             
-            if !diff.rowsToReload.isEmpty {
-                tableView.reloadRows(at: diff.rowsToReload, with: animation.reload)
-            }
-            
             if !diff.sectionHeadersToReload.isEmpty {
                 diff.sectionHeadersToReload.forEach { index in
                     if let header = self.structure[index].header, let headerView = tableView.headerView(forSection: index) {
@@ -73,7 +69,7 @@ extension StructureController {
             tableView.insertSections(diff.sectionsToInsert, with: animation.insert)
         }
         
-        for movement in diff.rowsToMove {
+        for movement in diff.rowsToMove.filter { !diff.rowsToReload.contains($0.to) } {
             tableView.moveRow(at: movement.from, to: movement.to)
         }
         
@@ -83,6 +79,10 @@ extension StructureController {
         
         if !diff.rowsToInsert.isEmpty {
             tableView.insertRows(at: diff.rowsToInsert, with: animation.insert)
+        }
+        
+        if !diff.rowsToReload.isEmpty {
+            tableView.reloadRows(at: diff.rowsToReload, with: animation.reload)
         }
         
         tableView.endUpdates()
