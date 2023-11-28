@@ -228,7 +228,7 @@ extension StructureController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didEndDisplayingHeaderView view: UIView, forSection section: Int) {
         if tableViewDelegate?.responds(to: #selector(tableView(_:didEndDisplayingHeaderView:forSection:))) == true {
             tableViewDelegate?.tableView?(tableView, didEndDisplayingHeaderView: view, forSection: section)
-        } else if let header = structure[section].header {
+        } else if structure.indices.contains(section), let header = structure[section].header {
             switch header {
             case .view(let viewModel):
                 if let viewModel = viewModel as? StructurableDisplayable {
@@ -243,7 +243,7 @@ extension StructureController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didEndDisplayingFooterView view: UIView, forSection section: Int) {
         if tableViewDelegate?.responds(to: #selector(tableView(_:didEndDisplayingFooterView:forSection:))) == true {
             tableViewDelegate?.tableView?(tableView, didEndDisplayingFooterView: view, forSection: section)
-        } else if let footer = structure[section].footer {
+        } else if structure.indices.contains(section), let footer = structure[section].footer {
             switch footer {
             case .view(let viewModel):
                 if let viewModel = viewModel as? StructurableDisplayable {
