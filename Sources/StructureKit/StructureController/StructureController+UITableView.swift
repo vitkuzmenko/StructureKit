@@ -282,7 +282,7 @@ extension StructureController: UITableViewDelegate {
                 }
             }
         } else {
-            return 0
+            return tableView.sectionHeaderHeight
         }
     }
     
@@ -301,7 +301,7 @@ extension StructureController: UITableViewDelegate {
                 }
             }
          } else {
-            return 0
+            return tableView.sectionFooterHeight
         }
     }
     
