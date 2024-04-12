@@ -1,6 +1,6 @@
 Pod::Spec.new do |s |    
     s.name = "StructureKit"
-    s.version = "1.0.5"
+    s.version = "1.0.6"
     s.summary = "StructureKit is an simplest way to control very very hard tables or collections."
     s.homepage = "https://github.com/vitkuzmenko/StructureKit.git"
     

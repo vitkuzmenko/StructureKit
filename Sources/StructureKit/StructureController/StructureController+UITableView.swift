@@ -282,7 +282,7 @@ extension StructureController: UITableViewDelegate {
                 }
             }
         } else {
-            return tableView.sectionHeaderHeight
+            return .zero
         }
     }
     
