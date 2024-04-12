@@ -352,7 +352,7 @@ public extension StructurableEditable {
 
 public protocol StructurableDisplayable {
     
-    #if os(iOS)
+    #if os(iOS) || os(tvOS)
     typealias WillDisplay = (UIView) -> Void
     
     typealias DidEndDisplay = (UIView) -> Void
@@ -379,7 +379,7 @@ public extension StructurableDisplayable {
 
 // MARK: - StructurableMovable
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 
 public protocol StructurableMovable {
     
