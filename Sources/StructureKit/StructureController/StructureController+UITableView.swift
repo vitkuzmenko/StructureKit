@@ -270,7 +270,7 @@ extension StructureController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if tableViewDelegate?.responds(to: #selector(tableView(_:heightForHeaderInSection:))) == true, let height = tableViewDelegate?.tableView?(tableView, heightForHeaderInSection: section) {
             return height
-        } else if let header = structure[section].header {
+        } else if structure.indices.contains(section), let header = structure[section].header {
             switch header {
             case .text:
                 return tableView.sectionHeaderHeight
@@ -289,7 +289,7 @@ extension StructureController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
          if tableViewDelegate?.responds(to: #selector(tableView(_:heightForFooterInSection:))) == true, let height = tableViewDelegate?.tableView?(tableView, heightForFooterInSection: section) {
              return height
-         } else if let footer = structure[section].footer {
+         } else if structure.indices.contains(section), let footer = structure[section].footer {
             switch footer {
             case .text:
                 return tableView.sectionFooterHeight
@@ -310,7 +310,7 @@ extension StructureController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if tableViewDelegate?.responds(to: #selector(tableView(_:viewForHeaderInSection:))) == true, let view = tableViewDelegate?.tableView?(tableView, viewForHeaderInSection: section) {
             return view
-        } else if let header = structure[section].header {
+        } else if structure.indices.contains(section), let header = structure[section].header {
             switch header {
             case .view(let viewModel):
                 let identifier = type(of: viewModel).reuseIdentifierForTableViewHeaderFooter()
@@ -331,7 +331,7 @@ extension StructureController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if tableViewDelegate?.responds(to: #selector(tableView(_:viewForFooterInSection:))) == true, let view = tableViewDelegate?.tableView?(tableView, viewForFooterInSection: section) {
             return view
-        } else if let footer = structure[section].footer {
+        } else if structure.indices.contains(section), let footer = structure[section].footer {
             switch footer {
             case .view(let viewModel):
                 let identifier = type(of: viewModel).reuseIdentifierForTableViewHeaderFooter()
