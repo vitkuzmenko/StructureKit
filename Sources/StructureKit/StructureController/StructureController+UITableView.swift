@@ -13,17 +13,10 @@ import UIKit
 extension StructureController {
     
     internal func performTableViewReload(_ tableView: UITableView, diff: StructureDiffer, with animation: TableAnimationRule) {
-            
-        var hasher = Hasher()
-        hasher.combine(Date())
-        
-        currentTableReloadingHasher = hasher
         
         CATransaction.begin()
         
         CATransaction.setCompletionBlock({
-            
-            guard hasher.finalize() == self.currentTableReloadingHasher?.finalize() else { return }
             
             if !diff.sectionHeadersToReload.isEmpty {
                 diff.sectionHeadersToReload.forEach { index in
@@ -51,6 +44,10 @@ extension StructureController {
                         }
                     }
                 }
+            }
+            
+            DispatchQueue.main.async {
+                self.reloadCompleted()
             }
             
         })

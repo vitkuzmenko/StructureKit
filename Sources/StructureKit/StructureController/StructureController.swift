@@ -49,17 +49,15 @@ final public class StructureController: NSObject {
     
     public var tableAnimationRule: TableAnimationRule = .fade
     
-    internal var currentTableReloadingHasher: Hasher?
-    
     // MARK: - CollectionView Parameters
     
     internal weak var collectionViewDelegate: NativeCollectionViewDelegate?
     
     public var collectionAnimationRule: CollectionAnimationRule = .animated
     
-    internal var currentCollectionReloadingHasher: Hasher?
+    internal var reloadInProgress: Bool = false
     
-    internal var shouldReload: Bool = false
+    internal var nextStructure: [StructureSection]?
     
     // MARK: - Structure
     
@@ -201,6 +199,10 @@ final public class StructureController: NSObject {
     }
     
     internal func set(structure newStructure: [StructureSection], to tableView: NativeTableView) {
+        if reloadInProgress {
+            nextStructure = newStructure
+            return
+        }
         switch tableAnimationRule {
         case .none:
             structure = newStructure
@@ -212,6 +214,7 @@ final public class StructureController: NSObject {
                 structureCast = newStructure.cast(for: structureView)
                 structure = newStructure
                 guard !previousStructure.isEmpty && structure(in: tableView, isEqualTo: previousStructure) else {
+                    reloadInProgress = false
                     return tableView.reloadData()
                 }
                 let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .tableView(tableView))
@@ -219,6 +222,7 @@ final public class StructureController: NSObject {
                 performTableViewReload(tableView, diff: diff, with: tableAnimationRule)
 #endif
             } catch let error {
+                reloadInProgress = false
                 NSLog("StructureController: Can not reload animated. %@", error.localizedDescription)
                 tableView.reloadData()
             }
@@ -226,23 +230,38 @@ final public class StructureController: NSObject {
     }
     
     internal func set(structure newStructure: [StructureSection], to collectionView: NativeCollectionView) {
-        if collectionAnimationRule.enabled {
+        if reloadInProgress {
+            nextStructure = newStructure
+            return
+        }
+        if collectionAnimationRule.enabled && collectionView.window != nil {
+            reloadInProgress = true
             do {
                 previousStructure = structureCast
                 structureCast = newStructure.cast(for: structureView)
                 structure = newStructure
                 if previousStructure.isEmpty || !self.structure(in: collectionView, isEqualTo: previousStructure) {
+                    reloadInProgress = false
                     return collectionView.reloadData()
                 }
                 let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .collectionView(collectionView))
                 performCollectionViewReload(collectionView, diff: diff, animation: collectionAnimationRule)
             } catch let error {
+                reloadInProgress = false
                 NSLog("StructureController: Can not reload animated. %@", error.localizedDescription)
                 collectionView.reloadData()
             }
         } else {
             structure = newStructure
             collectionView.reloadData()
+        }
+    }
+    
+    internal func reloadCompleted() {
+        self.reloadInProgress = false
+        if let nextStructure {
+            self.nextStructure = nil
+            set(structure: nextStructure)
         }
     }
     

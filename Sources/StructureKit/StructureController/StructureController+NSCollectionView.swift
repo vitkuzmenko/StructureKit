@@ -18,11 +18,6 @@ extension StructureController {
             return print("[StrucutreKit] ♻️ Skip reloading. StructureDiffer is empty")
         }
         
-        var hasher = Hasher()
-        hasher.combine(Date())
-        
-        currentCollectionReloadingHasher = hasher
-        
         collectionView.animator().performBatchUpdates({
             
             for movement in diff.sectionsToMove {
@@ -83,6 +78,10 @@ extension StructureController {
                         }
                     }
                 }
+            }
+            
+            DispatchQueue.main.async {
+                self.reloadCompleted()
             }
         })
     }
