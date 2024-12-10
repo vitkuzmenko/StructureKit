@@ -79,7 +79,7 @@ final public class StructureController: NSObject {
     
     public func indexPath(for object: StructurableIdentifable) -> IndexPath? {
         let objectIdentifyHasher = object.identifyHasher(for: structureView)
-        return structure.indexPath(of: objectIdentifyHasher, StructureView: structureView)?.indexPath
+        return structure.indexPath(of: objectIdentifyHasher, structureView: structureView)?.indexPath
     }
     
     public func header(at section: Int) -> StructureSection.HeaderFooter? {
@@ -199,10 +199,6 @@ final public class StructureController: NSObject {
     }
     
     internal func set(structure newStructure: [StructureSection], to tableView: NativeTableView) {
-        if reloadInProgress {
-            nextStructure = newStructure
-            return
-        }
         switch tableAnimationRule {
         case .none:
             structure = newStructure
@@ -214,15 +210,13 @@ final public class StructureController: NSObject {
                 structureCast = newStructure.cast(for: structureView)
                 structure = newStructure
                 guard !previousStructure.isEmpty && structure(in: tableView, isEqualTo: previousStructure) else {
-                    reloadInProgress = false
                     return tableView.reloadData()
                 }
-                let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .tableView(tableView))
+                let diff = try StructureDiffer(from: previousStructure, to: newStructure, structureView: .tableView(tableView))
 
                 performTableViewReload(tableView, diff: diff, with: tableAnimationRule)
 #endif
             } catch let error {
-                reloadInProgress = false
                 NSLog("StructureController: Can not reload animated. %@", error.localizedDescription)
                 tableView.reloadData()
             }
@@ -244,7 +238,7 @@ final public class StructureController: NSObject {
                     reloadInProgress = false
                     return collectionView.reloadData()
                 }
-                let diff = try StructureDiffer(from: previousStructure, to: newStructure, StructureView: .collectionView(collectionView))
+                let diff = try StructureDiffer(from: previousStructure, to: newStructure, structureView: .collectionView(collectionView))
                 performCollectionViewReload(collectionView, diff: diff, animation: collectionAnimationRule)
             } catch let error {
                 reloadInProgress = false

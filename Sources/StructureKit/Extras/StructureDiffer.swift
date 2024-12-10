@@ -48,123 +48,93 @@ class StructureDiffer: CustomStringConvertible {
     
     var rowsToReload: [IndexPath] = []
     
-    init(from oldStructure: [StructureCastSection], to newStructure: [StructureSection], StructureView: StructureView) throws {
-        
-        for (oldSectionIndex, oldSection) in oldStructure.enumerated() {
-            
-            if let newSectionIndex = newStructure.firstIndex(where: { $0.identifier == oldSection.identifier }) {
-                if oldSectionIndex != newSectionIndex {
-                    sectionsToMove.append((from: oldSectionIndex, to: newSectionIndex))
-                }
-                
-                if let oldHeaderHasher = oldSection.headerContentHasher,
-                    let newHeaderHasher = newStructure[newSectionIndex].headerContentHasher,
-                    oldHeaderHasher.finalize() != newHeaderHasher.finalize() {
-                    sectionHeadersToReload.insert(newSectionIndex)
-                }
-                
-                if let oldFooterHasher = oldSection.footerContentHasher,
-                    let newFooterHasher = newStructure[newSectionIndex].footerContentHasher,
-                    oldFooterHasher.finalize() != newFooterHasher.finalize() {
-                    sectionFootersToReload.insert(newSectionIndex)
-                }
-                
-            } else {
-                sectionsToDelete.insert(oldSectionIndex)
+    init(from oldStructure: [StructureCastSection], to newStructure: [StructureSection], structureView: StructureView) throws {
+        // Map identifiers for old and new sections
+        let oldSectionsById = Dictionary(uniqueKeysWithValues: oldStructure.map { ($0.identifier, $0) })
+
+        // Identify sections to delete
+        for (index, oldSection) in oldStructure.enumerated() {
+            if !newStructure.contains(where: { $0.identifier == oldSection.identifier }) {
+                sectionsToDelete.insert(index)
             }
-            
-            for (oldRowIndex, oldRow) in oldSection.rows.enumerated() {
-                var skipForContentUpdater = false
-                let oldIndexPath = IndexPath(item: oldRowIndex, section: oldSectionIndex)
-                if let rowIdentifyHasher = oldRow.identifyHasher, let newRow = newStructure.indexPath(of: rowIdentifyHasher, StructureView: StructureView) {
-                    let newRowIndexPath = newRow.indexPath
-                    if oldIndexPath != newRowIndexPath {
-                        if newStructure.contains(where: { $0.identifier == oldSection.identifier }) {
-                            let newSection = newStructure[newRowIndexPath.section]
-                            if oldStructure.contains(where: { $0.identifier == newSection.identifier }) {
-                                rowsToMove.append((from: oldIndexPath, to: newRowIndexPath))
-                            } else {
-                                rowsToDelete.append(oldIndexPath)
-                                skipForContentUpdater = true
-                            }
-                        } else {
-                            rowsToInsert.append(newRowIndexPath)
-                        }
-                    }
-                    if !skipForContentUpdater {
-                        var contentHasher = Hasher()
-                        if let oldRowContentHasher = oldRow.contentHasher,
-                            let newRowContentIdentifable = newRow.cellModel as? StructurableContentIdentifable {
-                            newRowContentIdentifable.contentHash(into: &contentHasher)
-                            if contentHasher.finalize() != oldRowContentHasher.finalize() {
-                                rowsToReload.append(newRowIndexPath)
-                            }
-                        }
-                    }
-                } else {
-                    rowsToDelete.append(oldIndexPath)
-                }
-                
-            }
-        }
-        
-        for (newSectionIndex, newSection) in newStructure.enumerated() {
-            if !oldStructure.contains(where: { $0.identifier == newSection.identifier }) {
-                sectionsToInsert.insert(newSectionIndex)
-            }
-            
-            for (newRowIndex, newRow) in newSection.rows.enumerated() {
-                if let newRowIdentifable = newRow as? StructurableIdentifable, oldStructure.contains(Structure: newRowIdentifable.identifyHasher(for: StructureView)) {
-                    // nothing
-                } else {
-                    rowsToInsert.append(IndexPath(item: newRowIndex, section: newSectionIndex))
-                }
-            }
-        }
-        
-        if rowsToDelete.contains(where: { (deletion) -> Bool in
-            return sectionsToMove.contains(where: { (movement) -> Bool in
-                return movement.from == deletion.section
-            })
-        }) {
-            throw DifferenceError.deletion
         }
 
-        if rowsToInsert.contains(where: { (insertion) -> Bool in
-            return sectionsToMove.contains(where: { (movement) -> Bool in
-                return movement.to == insertion.section
-            })
-        }) {
-            throw DifferenceError.insertion
-        }
-        
-        rowsToInsert = rowsToInsert.filter { indexPath in
-            !sectionsToInsert.contains(indexPath.section)
-        }
-        
-        var uniqueSections: [StructureSection] = []
-        
-        for newSection in newStructure {
-            if uniqueSections.contains(where: { $0.identifier == newSection.identifier }) {
-                throw DifferenceError.similarSections
+        // Identify sections to insert or move
+        for (newIndex, newSection) in newStructure.enumerated() {
+            if let oldIndex = oldStructure.firstIndex(where: { $0.identifier == newSection.identifier }) {
+                if oldIndex != newIndex {
+                    sectionsToMove.append((from: oldIndex, to: newIndex))
+                }
+
+                // Check header/footer changes for reloads
+                if let oldSection = oldSectionsById[newSection.identifier] {
+                    if oldSection.headerContentHasher?.finalize() != newSection.headerContentHasher?.finalize() {
+                        sectionHeadersToReload.insert(newIndex)
+                    }
+                    if oldSection.footerContentHasher?.finalize() != newSection.footerContentHasher?.finalize() {
+                        sectionFootersToReload.insert(newIndex)
+                    }
+                }
             } else {
-                uniqueSections.append(newSection)
+                sectionsToInsert.insert(newIndex)
             }
         }
-        
-        var unique: [Structurable] = []
-        
-        for section in newStructure {
-            for lhs in section.rows {
-                if let lhsIdentifable = lhs as? StructurableIdentifable, unique.contains(where: { rhs -> Bool in
-                    guard let rhsIdentifable = rhs as? StructurableIdentifable else { return false }
-                    let lhsIdentifyHasher = lhsIdentifable.identifyHasher(for: StructureView)
-                    let rhsIdentifyHasher = rhsIdentifable.identifyHasher(for: StructureView)
-                    return lhsIdentifyHasher.finalize() == rhsIdentifyHasher.finalize()
-                }) {
-                    throw DifferenceError.similarObjects
+
+        // Identify rows to delete, insert, move, or reload within sections
+        for (oldSectionIndex, oldSection) in oldStructure.enumerated() {
+            for (oldRowIndex, oldRow) in oldSection.rows.enumerated() {
+                guard let rowIdentifyHasher = oldRow.identifyHasher else { continue }
+                if let (newIndexPath, newCell) = newStructure.indexPath(of: rowIdentifyHasher, structureView: structureView) {
+                    let newSectionIndex = newIndexPath.section
+                    let newRowIndex = newIndexPath.row
+                    if oldSectionIndex != newSectionIndex || oldRowIndex != newRowIndex {
+                        rowsToMove.append((
+                            from: IndexPath(row: oldRowIndex, section: oldSectionIndex),
+                            to: IndexPath(row: newRowIndex, section: newSectionIndex)
+                        ))
+                    }
+
+                    // Check for row reload
+                    if let oldContentHasher = oldRow.contentHasher, let newContentHasher = (newCell as? StructurableContentIdentifable)?.contentHasher() {
+                        if oldContentHasher.finalize() != newContentHasher.finalize() {
+                            rowsToReload.append(newIndexPath)
+                        }
+                    }
                 } else {
-                    unique.append(lhs)
+                    // Row was deleted
+                    rowsToDelete.append(IndexPath(row: oldRowIndex, section: oldSectionIndex))
+                }
+            }
+        }
+
+        // Ensure no conflict between rowsToDelete and rowsToReload
+        rowsToReload = rowsToReload.filter { !rowsToDelete.contains($0) }
+        
+        // Ensure no conflict between rowsToDelete and rowsToMove
+        rowsToDelete = rowsToDelete.filter { delete in
+            !rowsToMove.contains { $0.from == delete }
+        }
+        
+        // Filter out row-level operations within sections that are being deleted
+        rowsToDelete = rowsToDelete.filter { delete in
+            !sectionsToDelete.contains(delete.section)
+        }
+
+        rowsToMove = rowsToMove.filter { move in
+            !sectionsToDelete.contains(move.from.section) && !sectionsToMove.contains { $0.from == move.from.section }
+        }
+
+        // Filter out row-level operations within sections that are being moved
+        rowsToReload = rowsToReload.filter { reload in
+            !sectionsToMove.contains { $0.from == reload.section }
+        }
+
+        // Identify rows to insert
+        for (newSectionIndex, newSection) in newStructure.enumerated() {
+            for (newRowIndex, newRow) in newSection.rows.enumerated() {
+                guard let rowIdentifyHasher = (newRow as? StructurableIdentifable)?.identifyHasher(for: structureView) else { continue }
+                if !oldStructure.contains(where: { $0.rows.contains { $0.identifyHasher?.finalize() == rowIdentifyHasher.finalize() } }) {
+                    rowsToInsert.append(IndexPath(row: newRowIndex, section: newSectionIndex))
                 }
             }
         }
@@ -198,5 +168,10 @@ class StructureDiffer: CustomStringConvertible {
     
 }
 
+extension Collection {
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
 
 #endif

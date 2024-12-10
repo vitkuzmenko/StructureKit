@@ -91,7 +91,7 @@ extension StructureSection {
 
 extension Sequence where Iterator.Element == StructureSection {
     
-    func indexPath(of identifyHasher: Hasher, StructureView: StructureView) -> (indexPath: IndexPath, cellModel: StructurableIdentifable)? {
+    func indexPath(of identifyHasher: Hasher, structureView: StructureView) -> (indexPath: IndexPath, cellModel: StructurableIdentifable)? {
         for (index, section) in enumerated() {
                         
             let firstIndex = section.rows.firstIndex { rhs -> Bool in
@@ -99,7 +99,7 @@ extension Sequence where Iterator.Element == StructureSection {
                     return false
                 }
                 
-                let rhsIdentifyHasher = rhsIdentifable.identifyHasher(for: StructureView)
+                let rhsIdentifyHasher = rhsIdentifable.identifyHasher(for: structureView)
                 return identifyHasher.finalize() == rhsIdentifyHasher.finalize()
             }
             
@@ -110,8 +110,8 @@ extension Sequence where Iterator.Element == StructureSection {
         return nil
     }
     
-    func contains(Structure identifyHasher: Hasher, StructureView: StructureView) -> Bool {
-        return indexPath(of: identifyHasher, StructureView: StructureView) != nil
+    func contains(Structure identifyHasher: Hasher, structureView: StructureView) -> Bool {
+        return indexPath(of: identifyHasher, structureView: structureView) != nil
     }
     
     // MARK: - Converting to old strcuture
