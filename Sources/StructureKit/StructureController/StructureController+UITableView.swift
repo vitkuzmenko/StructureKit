@@ -297,9 +297,11 @@ extension StructureController: UITableViewDelegate {
                     return tableView.sectionFooterHeight
                 }
             }
+         } else if tableView.numberOfSections - 1 == section {
+             return CGFLOAT_MIN
          } else {
-            return tableView.sectionFooterHeight
-        }
+             return tableView.sectionFooterHeight
+         }
     }
     
     // MARK: - Header/Footer Views
