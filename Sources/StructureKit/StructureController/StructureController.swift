@@ -203,11 +203,11 @@ final public class StructureController: NSObject {
             nextStructure = newStructure
             return
         }
-        switch tableAnimationRule {
-        case .none:
+        if tableAnimationRule == .none || tableView.window == nil {
             structure = newStructure
             tableView.reloadData()
-        default:
+            return
+        } else {
             reloadInProgress = true
             do {
 #if os(iOS) || os(tvOS)

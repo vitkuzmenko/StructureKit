@@ -45,11 +45,6 @@ extension StructureController {
                     }
                 }
             }
-            
-            DispatchQueue.main.async {
-                self.reloadCompleted()
-            }
-            
         })
         
         tableView.beginUpdates()
@@ -66,7 +61,7 @@ extension StructureController {
             tableView.insertSections(diff.sectionsToInsert, with: animation.insert)
         }
         
-        for movement in diff.rowsToMove.filter { !diff.rowsToReload.contains($0.to) } {
+        for movement in diff.rowsToMove.filter({ !diff.rowsToReload.contains($0.to) }) {
             tableView.moveRow(at: movement.from, to: movement.to)
         }
         
@@ -85,6 +80,10 @@ extension StructureController {
         tableView.endUpdates()
         
         CATransaction.commit()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.reloadCompleted()
+        }
         
     }
             
