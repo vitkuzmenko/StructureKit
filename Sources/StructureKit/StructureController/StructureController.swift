@@ -199,6 +199,10 @@ final public class StructureController: NSObject {
     }
     
     internal func set(structure newStructure: [StructureSection], to tableView: NativeTableView) {
+        if reloadInProgress {
+            nextStructure = newStructure
+            return
+        }
         switch tableAnimationRule {
         case .none:
             structure = newStructure
@@ -210,6 +214,7 @@ final public class StructureController: NSObject {
                 structureCast = newStructure.cast(for: structureView)
                 structure = newStructure
                 guard !previousStructure.isEmpty && structure(in: tableView, isEqualTo: previousStructure) else {
+                    reloadInProgress = false
                     return tableView.reloadData()
                 }
                 let diff = try StructureDiffer(from: previousStructure, to: newStructure, structureView: .tableView(tableView))
@@ -217,6 +222,7 @@ final public class StructureController: NSObject {
                 performTableViewReload(tableView, diff: diff, with: tableAnimationRule)
 #endif
             } catch let error {
+                reloadInProgress = false
                 NSLog("StructureController: Can not reload animated. %@", error.localizedDescription)
                 tableView.reloadData()
             }
