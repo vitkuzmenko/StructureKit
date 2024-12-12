@@ -208,6 +208,7 @@ final public class StructureController: NSObject {
             structure = newStructure
             tableView.reloadData()
         default:
+            reloadInProgress = true
             do {
 #if os(iOS) || os(tvOS)
                 previousStructure = structureCast
