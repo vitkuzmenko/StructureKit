@@ -204,6 +204,7 @@ final public class StructureController: NSObject {
             return
         }
         if tableAnimationRule == .none || tableView.window == nil {
+            structureCast = newStructure.cast(for: structureView)
             structure = newStructure
             tableView.reloadData()
             return
@@ -253,6 +254,7 @@ final public class StructureController: NSObject {
                 collectionView.reloadData()
             }
         } else {
+            structureCast = newStructure.cast(for: structureView)
             structure = newStructure
             collectionView.reloadData()
         }
