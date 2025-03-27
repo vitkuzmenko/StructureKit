@@ -18,32 +18,10 @@ extension StructureController {
         
         CATransaction.setCompletionBlock({
             
-            if !diff.sectionHeadersToReload.isEmpty {
-                diff.sectionHeadersToReload.forEach { index in
-                    if let header = self.structure[index].header, let headerView = tableView.headerView(forSection: index) {
-                        switch header {
-                        case .text(let text):
-                            headerView.textLabel?.text = text
-                            headerView.textLabel?.sizeToFit()
-                        case .view(let viewModel):
-                            viewModel._configure(tableViewHeaderFooterView: headerView, isUpdating: true)
-                        }
-                    }
-                }
-            }
+            let indexSet = diff.sectionHeadersToReload.union(diff.sectionFootersToReload)
             
-            if !diff.sectionFootersToReload.isEmpty {
-                diff.sectionFootersToReload.forEach { index in
-                    if let footer = self.structure[index].footer, let footerView = tableView.footerView(forSection: index) {
-                        switch footer {
-                        case .text(let text):
-                            footerView.textLabel?.text = text
-                            footerView.textLabel?.sizeToFit()
-                        case .view(let viewModel):
-                            viewModel._configure(tableViewHeaderFooterView: footerView, isUpdating: true)
-                        }
-                    }
-                }
+            if !indexSet.isEmpty {
+                tableView.reloadSections(indexSet, with: .none)
             }
         })
         
