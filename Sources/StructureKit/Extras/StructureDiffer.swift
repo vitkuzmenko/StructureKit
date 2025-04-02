@@ -86,11 +86,11 @@ class StructureDiffer: CustomStringConvertible {
                 guard let rowIdentifyHasher = oldRow.identifyHasher else { continue }
                 if let (newIndexPath, newCell) = newStructure.indexPath(of: rowIdentifyHasher, structureView: structureView) {
                     let newSectionIndex = newIndexPath.section
-                    let newRowIndex = newIndexPath.row
+                    let newRowIndex = newIndexPath.item
                     if oldSectionIndex != newSectionIndex || oldRowIndex != newRowIndex {
                         rowsToMove.append((
-                            from: IndexPath(row: oldRowIndex, section: oldSectionIndex),
-                            to: IndexPath(row: newRowIndex, section: newSectionIndex)
+                            from: IndexPath(item: oldRowIndex, section: oldSectionIndex),
+                            to: IndexPath(item: newRowIndex, section: newSectionIndex)
                         ))
                     }
 
@@ -102,7 +102,7 @@ class StructureDiffer: CustomStringConvertible {
                     }
                 } else {
                     // Row was deleted
-                    rowsToDelete.append(IndexPath(row: oldRowIndex, section: oldSectionIndex))
+                    rowsToDelete.append(IndexPath(item: oldRowIndex, section: oldSectionIndex))
                 }
             }
         }
@@ -134,7 +134,7 @@ class StructureDiffer: CustomStringConvertible {
             for (newRowIndex, newRow) in newSection.rows.enumerated() {
                 guard let rowIdentifyHasher = (newRow as? StructurableIdentifable)?.identifyHasher(for: structureView) else { continue }
                 if !oldStructure.contains(where: { $0.rows.contains { $0.identifyHasher?.finalize() == rowIdentifyHasher.finalize() } }) {
-                    rowsToInsert.append(IndexPath(row: newRowIndex, section: newSectionIndex))
+                    rowsToInsert.append(IndexPath(item: newRowIndex, section: newSectionIndex))
                 }
             }
         }
