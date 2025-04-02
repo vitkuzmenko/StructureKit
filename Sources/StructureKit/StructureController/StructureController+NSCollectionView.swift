@@ -15,6 +15,9 @@ extension StructureController {
     internal func performCollectionViewReload(_ collectionView: NSCollectionView, diff: StructureDiffer, animation: CollectionAnimationRule) {
             
         if diff.isEmpty {
+            DispatchQueue.main.async {
+                self.reloadCompleted()
+            }
             return print("[StrucutreKit] ♻️ Skip reloading. StructureDiffer is empty")
         }
         
