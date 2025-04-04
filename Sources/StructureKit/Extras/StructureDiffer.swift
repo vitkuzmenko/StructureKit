@@ -128,6 +128,10 @@ class StructureDiffer: CustomStringConvertible {
         rowsToReload = rowsToReload.filter { reload in
             !sectionsToMove.contains { $0.from == reload.section }
         }
+        
+        rowsToReload = rowsToReload.filter { reload in
+            !rowsToMove.contains(where: { move in move.from == reload })
+        }
 
         // Identify rows to insert
         for (newSectionIndex, newSection) in newStructure.enumerated() {
