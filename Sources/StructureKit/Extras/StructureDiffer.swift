@@ -168,7 +168,7 @@ class StructureDiffer: CustomStringConvertible {
                 else { continue }
                 if !oldStructure.contains(where: {
                     $0.rows.contains { $0.identifyHasher?.finalize() == rowIdentifyHasher.finalize() }
-                }) {
+                }) && !sectionsToInsert.contains(newSectionIndex) {
                     rowsToInsert.append(IndexPath(item: newRowIndex, section: newSectionIndex))
                 }
             }
