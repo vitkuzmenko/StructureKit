@@ -14,7 +14,7 @@ class StructureDiffer: CustomStringConvertible {
 
     enum DifferenceError: Error, LocalizedError {
 
-        case insertion, deletion, similarObjects, similarSections
+        case insertion, deletion, similarObjects, similarSections, moveIntoInsertedSection, moveIntoDeletedSection
 
         var errorDescription: String? {
             switch self {
@@ -26,6 +26,10 @@ class StructureDiffer: CustomStringConvertible {
                 return "Structure contains two or more equal section identifiers."
             case .similarObjects:
                 return "Structure contains two or more equal objects."
+            case .moveIntoInsertedSection:
+                return "Attempts to move row into inserted section."
+            case .moveIntoDeletedSection:
+                return "Attempts to move row into deleted section."
             }
         }
     }
@@ -72,6 +76,7 @@ class StructureDiffer: CustomStringConvertible {
 
         // Map identifiers for old and new sections
         let oldSectionsById = Dictionary(uniqueKeysWithValues: oldStructure.map { ($0.identifier, $0) })
+        let oldIndexById: [AnyHashable: Int] = Dictionary(uniqueKeysWithValues: oldStructure.enumerated().map { ($1.identifier, $0) })
 
         // Identify sections to delete
         for (index, oldSection) in oldStructure.enumerated() {
@@ -80,10 +85,26 @@ class StructureDiffer: CustomStringConvertible {
             }
         }
 
-        // Identify sections to insert or move
+        // First pass: identify sections to insert
         for (newIndex, newSection) in newStructure.enumerated() {
-            if let oldIndex = oldStructure.firstIndex(where: { $0.identifier == newSection.identifier }) {
+            if oldIndexById[newSection.identifier] == nil {
+                sectionsToInsert.insert(newIndex)
+            }
+        }
+
+        // Second pass: identify sections to move (excluding shifts only due to insertions) and header/footer reloads
+        // Also collect potential section moves (naïve oldIndex != newIndex) for row-level filtering
+        var potentialSectionsToMove = IndexSet()
+        for (newIndex, newSection) in newStructure.enumerated() {
+            if let oldIndex = oldIndexById[newSection.identifier] {
+                // Record potential move when indices differ (regardless of insertion shifts)
                 if oldIndex != newIndex {
+                    potentialSectionsToMove.insert(oldIndex)
+                }
+                // Count inserted sections that appear before (or at) this new index
+                let insertedBeforeCount = sectionsToInsert.filter { $0 <= newIndex }.count
+                let expectedNewIndex = oldIndex + insertedBeforeCount
+                if expectedNewIndex != newIndex {
                     sectionsToMove.append((from: oldIndex, to: newIndex))
                 }
 
@@ -96,8 +117,6 @@ class StructureDiffer: CustomStringConvertible {
                         sectionFootersToReload.insert(newIndex)
                     }
                 }
-            } else {
-                sectionsToInsert.insert(newIndex)
             }
         }
 
@@ -135,6 +154,24 @@ class StructureDiffer: CustomStringConvertible {
             }
         }
 
+        // Disallow moving existing rows into newly inserted sections
+        if !sectionsToInsert.isEmpty {
+            if rowsToMove.contains(where: { move in
+                sectionsToInsert.contains(move.from.section)
+            }) {
+                throw DifferenceError.moveIntoInsertedSection
+            }
+        }
+
+        // Disallow moving existing rows into newly inserted sections
+        if !sectionsToDelete.isEmpty {
+            if rowsToMove.contains(where: { move in
+                sectionsToDelete.contains(move.to.section)
+            }) {
+                throw DifferenceError.moveIntoDeletedSection
+            }
+        }
+
         // Ensure no conflict between rowsToDelete and rowsToReload
         rowsToReload = rowsToReload.filter { !rowsToDelete.contains($0) }
 
@@ -149,7 +186,7 @@ class StructureDiffer: CustomStringConvertible {
         }
 
         rowsToMove = rowsToMove.filter { move in
-            !sectionsToDelete.contains(move.from.section) && !sectionsToMove.contains { $0.from == move.from.section }
+            !sectionsToDelete.contains(move.from.section) && !potentialSectionsToMove.contains(move.from.section)
         }
 
         // Filter out row-level operations within sections that are being moved
@@ -173,6 +210,17 @@ class StructureDiffer: CustomStringConvertible {
                 }
             }
         }
+
+        // Disallow moving existing rows into newly inserted sections
+        if !sectionsToInsert.isEmpty {
+            let hasMoveIntoInsertedSection = rowsToMove.contains { move in
+                sectionsToInsert.contains(move.to.section)
+            }
+            if hasMoveIntoInsertedSection {
+                throw DifferenceError.moveIntoInsertedSection
+            }
+        }
+
     }
 
     var isEmpty: Bool {
