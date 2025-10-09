@@ -75,150 +75,106 @@ class StructureDiffer: CustomStringConvertible {
         }
 
         // Map identifiers for old and new sections
-        let oldSectionsById = Dictionary(uniqueKeysWithValues: oldStructure.map { ($0.identifier, $0) })
-        let oldIndexById: [AnyHashable: Int] = Dictionary(uniqueKeysWithValues: oldStructure.enumerated().map { ($1.identifier, $0) })
+        _ = Dictionary(uniqueKeysWithValues: oldStructure.map { ($0.identifier, $0) })
+        _ = Dictionary(uniqueKeysWithValues: oldStructure.enumerated().map { ($1.identifier, $0) }) as [AnyHashable: Int]
+        _ = Dictionary(uniqueKeysWithValues: newStructure.enumerated().map { ($1.identifier, $0) }) as [AnyHashable: Int]
 
-        // Identify sections to delete
-        for (index, oldSection) in oldStructure.enumerated() {
-            if !newStructure.contains(where: { $0.identifier == oldSection.identifier }) {
-                sectionsToDelete.insert(index)
+        // SECTION DIFF (Paul Heckel)
+        let oldSectionIdsArray: [Int] = oldStructure.map { $0.identifier.hashValue }
+        let newSectionIdsArray: [Int] = newStructure.map { $0.identifier.hashValue }
+        let sectionDiff = Heckel.diff(old: oldSectionIdsArray, new: newSectionIdsArray)
+
+        // Sections to delete/insert
+        sectionsToDelete = sectionDiff.deletes
+        sectionsToInsert = sectionDiff.inserts
+
+        // Moves for sections
+        sectionsToMove = sectionDiff.moves
+
+        // SECTION HEADER/FOOTER RELOADS (compare content hashers for matched sections)
+        for (oldIndex, newIndex) in sectionDiff.matches {
+            // Headers
+            let oldHeader = oldStructure[oldIndex].headerContentHasher?.finalize()
+            let newHeader = newStructure[newIndex].headerContentHasher?.finalize()
+            if oldHeader != newHeader {
+                sectionHeadersToReload.insert(newIndex)
+            }
+            // Footers
+            let oldFooter = oldStructure[oldIndex].footerContentHasher?.finalize()
+            let newFooter = newStructure[newIndex].footerContentHasher?.finalize()
+            if oldFooter != newFooter {
+                sectionFootersToReload.insert(newIndex)
             }
         }
 
-        // First pass: identify sections to insert
-        for (newIndex, newSection) in newStructure.enumerated() {
-            if oldIndexById[newSection.identifier] == nil {
-                sectionsToInsert.insert(newIndex)
-            }
-        }
+        // ROWS DIFF per matched section (no cross-section moves; represent those as delete+insert)
+        for (oldSectionIndex, newSectionIndex) in sectionDiff.matches {
+            let oldSection = oldStructure[oldSectionIndex]
+            let newSection = newStructure[newSectionIndex]
 
-        // Second pass: identify sections to move (excluding shifts only due to insertions) and header/footer reloads
-        // Also collect potential section moves (naïve oldIndex != newIndex) for row-level filtering
-        var potentialSectionsToMove = IndexSet()
-        for (newIndex, newSection) in newStructure.enumerated() {
-            if let oldIndex = oldIndexById[newSection.identifier] {
-                // Record potential move when indices differ (regardless of insertion shifts)
-                if oldIndex != newIndex {
-                    potentialSectionsToMove.insert(oldIndex)
-                }
-                // Count inserted sections that appear before (or at) this new index
-                let insertedBeforeCount = sectionsToInsert.filter { $0 <= newIndex }.count
-                let expectedNewIndex = oldIndex + insertedBeforeCount
-                if expectedNewIndex != newIndex {
-                    sectionsToMove.append((from: oldIndex, to: newIndex))
-                }
-
-                // Check header/footer changes for reloads
-                if let oldSection = oldSectionsById[newSection.identifier] {
-                    if oldSection.headerContentHasher?.finalize() != newSection.headerContentHasher?.finalize() {
-                        sectionHeadersToReload.insert(newIndex)
-                    }
-                    if oldSection.footerContentHasher?.finalize() != newSection.footerContentHasher?.finalize() {
-                        sectionFootersToReload.insert(newIndex)
-                    }
-                }
-            }
-        }
-
-        // Identify rows to delete, insert, move, or reload within sections
-        for (oldSectionIndex, oldSection) in oldStructure.enumerated() {
-            for (oldRowIndex, oldRow) in oldSection.rows.enumerated() {
-                guard let rowIdentifyHasher = oldRow.identifyHasher else { continue }
-                if let (newIndexPath, newCell) = newStructure.indexPath(
-                    of: rowIdentifyHasher,
-                    structureView: structureView
-                ) {
-                    let newSectionIndex = newIndexPath.section
-                    let newRowIndex = newIndexPath.item
-                    if oldSectionIndex != newSectionIndex || oldRowIndex != newRowIndex {
-                        rowsToMove.append(
-                            (
-                                from: IndexPath(item: oldRowIndex, section: oldSectionIndex),
-                                to: IndexPath(item: newRowIndex, section: newSectionIndex)
-                            )
-                        )
-                    }
-
-                    // Check for row reload
-                    if let oldContentHasher = oldRow.contentHasher,
-                        let newContentHasher = (newCell as? StructurableContentIdentifable)?.contentHasher()
-                    {
-                        if oldContentHasher.finalize() != newContentHasher.finalize() {
-                            rowsToReload.append(newIndexPath)
-                        }
-                    }
+            // Build identity arrays. Fallback to unique ephemeral ids for non-identifiable rows to force insert/delete.
+            let oldRowIds: [Int] = oldSection.rows.enumerated().map { idx, cast in
+                if let id = cast.identifyHasher?.finalize() {
+                    return id
                 } else {
-                    // Row was deleted
-                    rowsToDelete.append(IndexPath(item: oldRowIndex, section: oldSectionIndex))
+                    // Ephemeral unique id scoped to this section old side
+                    return (oldSectionIndex &* 73856093) ^ (idx &* 19349663) ^ 0x0f0f0f
+                }
+            }
+            let newRowIds: [Int] = newSection.rows.enumerated().map { idx, row in
+                if let ident = (row as? StructurableIdentifable)?.identifyHasher(for: structureView).finalize() {
+                    return ident
+                } else {
+                    // Ephemeral unique id scoped to this section new side
+                    return (newSectionIndex &* 83492791) ^ (idx &* 29765797) ^ 0xf0f0f0
+                }
+            }
+
+            let rowDiff = Heckel.diff(old: oldRowIds, new: newRowIds)
+
+            // Deletions (old index paths)
+            rowDiff.deletes.forEach { deleteRow in
+                rowsToDelete.append(IndexPath(item: deleteRow, section: oldSectionIndex))
+            }
+
+            // Insertions (new index paths)
+            rowDiff.inserts.forEach { insertRow in
+                rowsToInsert.append(IndexPath(item: insertRow, section: newSectionIndex))
+            }
+
+            // Moves (within the same matched section)
+            rowDiff.moves.forEach { move in
+                let from = IndexPath(item: move.from, section: oldSectionIndex)
+                let to = IndexPath(item: move.to, section: newSectionIndex)
+                rowsToMove.append((from: from, to: to))
+            }
+
+            // Reloads for matched (and not moved) items whose content hash changed
+            for (oldRowIndex, newRowIndex) in rowDiff.matches {
+                let moved = oldRowIndex != newRowIndex
+                if moved { continue } // avoid reloading moved rows in the same batch
+
+                let oldContent = oldSection.rows[oldRowIndex].contentHasher?.finalize()
+                let newRow = newSection.rows[newRowIndex]
+                let newContent = (newRow as? StructurableContentIdentifable)?.contentHasher().finalize()
+                if oldContent != newContent {
+                    rowsToReload.append(IndexPath(item: newRowIndex, section: newSectionIndex))
                 }
             }
         }
 
-        // Disallow moving existing rows into newly inserted sections
-        if !sectionsToInsert.isEmpty {
-            if rowsToMove.contains(where: { move in
-                sectionsToInsert.contains(move.from.section)
-            }) {
-                throw DifferenceError.moveIntoInsertedSection
-            }
+        // Sort operations for stability and UIKit expectations
+        rowsToDelete.sort { (lhs, rhs) -> Bool in
+            if lhs.section == rhs.section { return lhs.item > rhs.item } // descending within section
+            return lhs.section > rhs.section // delete higher sections first
         }
-
-        // Disallow moving existing rows into newly inserted sections
-        if !sectionsToDelete.isEmpty {
-            if rowsToMove.contains(where: { move in
-                sectionsToDelete.contains(move.to.section)
-            }) {
-                throw DifferenceError.moveIntoDeletedSection
-            }
+        rowsToInsert.sort { (lhs, rhs) -> Bool in
+            if lhs.section == rhs.section { return lhs.item < rhs.item } // ascending within section
+            return lhs.section < rhs.section
         }
-
-        // Ensure no conflict between rowsToDelete and rowsToReload
-        rowsToReload = rowsToReload.filter { !rowsToDelete.contains($0) }
-
-        // Ensure no conflict between rowsToDelete and rowsToMove
-        rowsToDelete = rowsToDelete.filter { delete in
-            !rowsToMove.contains { $0.from == delete }
-        }
-
-        // Filter out row-level operations within sections that are being deleted
-        rowsToDelete = rowsToDelete.filter { delete in
-            !sectionsToDelete.contains(delete.section)
-        }
-
-        rowsToMove = rowsToMove.filter { move in
-            !sectionsToDelete.contains(move.from.section) && !potentialSectionsToMove.contains(move.from.section)
-        }
-
-        // Filter out row-level operations within sections that are being moved
-        rowsToReload = rowsToReload.filter { reload in
-            !sectionsToMove.contains { $0.from == reload.section }
-        }
-
-        rowsToReload = rowsToReload.filter { reload in
-            !rowsToMove.contains(where: { move in move.from == reload })
-        }
-
-        // Identify rows to insert
-        for (newSectionIndex, newSection) in newStructure.enumerated() {
-            for (newRowIndex, newRow) in newSection.rows.enumerated() {
-                guard let rowIdentifyHasher = (newRow as? StructurableIdentifable)?.identifyHasher(for: structureView)
-                else { continue }
-                if !oldStructure.contains(where: {
-                    $0.rows.contains { $0.identifyHasher?.finalize() == rowIdentifyHasher.finalize() }
-                }) && !sectionsToInsert.contains(newSectionIndex) {
-                    rowsToInsert.append(IndexPath(item: newRowIndex, section: newSectionIndex))
-                }
-            }
-        }
-
-        // Disallow moving existing rows into newly inserted sections
-        if !sectionsToInsert.isEmpty {
-            let hasMoveIntoInsertedSection = rowsToMove.contains { move in
-                sectionsToInsert.contains(move.to.section)
-            }
-            if hasMoveIntoInsertedSection {
-                throw DifferenceError.moveIntoInsertedSection
-            }
+        rowsToReload.sort { (lhs, rhs) -> Bool in
+            if lhs.section == rhs.section { return lhs.item < rhs.item }
+            return lhs.section < rhs.section
         }
 
     }
@@ -243,6 +199,105 @@ class StructureDiffer: CustomStringConvertible {
         ].joined(separator: "\n")
     }
 
+}
+
+// MARK: - Heckel Diff
+
+fileprivate enum Heckel {
+    struct Entry {
+        var oldCount: Int = 0
+        var newCount: Int = 0
+        var oldIndices: [Int] = []
+        var newIndices: [Int] = []
+    }
+
+    struct Result {
+        let deletes: IndexSet
+        let inserts: IndexSet
+        let matches: [Int: Int] // oldIndex -> newIndex
+        let moves: [(from: Int, to: Int)]
+    }
+
+    static func diff(old: [Int], new: [Int]) -> Result {
+        // Symbol table by value
+        var table: [Int: Entry] = [:]
+
+        // Pass 1: scan new
+        for (j, value) in new.enumerated() {
+            var e = table[value] ?? Entry()
+            e.newCount += 1
+            e.newIndices.append(j)
+            table[value] = e
+        }
+
+        // Pass 2: scan old
+        for (i, value) in old.enumerated() {
+            var e = table[value] ?? Entry()
+            e.oldCount += 1
+            e.oldIndices.append(i)
+            table[value] = e
+        }
+
+        // Initialize matches arrays with -1 as unmatched
+        var oldToNew = Array(repeating: -1, count: old.count)
+        var newToOld = Array(repeating: -1, count: new.count)
+
+        // Pass 3: find all unique elements
+        for (_, e) in table where e.oldCount == 1 && e.newCount == 1 {
+            if let i = e.oldIndices.first, let j = e.newIndices.first {
+                oldToNew[i] = j
+                newToOld[j] = i
+            }
+        }
+
+        // Pass 4: scan forward to extend matches
+        var i = 0
+        while i < old.count - 1 {
+            let j = oldToNew[i]
+            if j >= 0 && j + 1 < new.count && oldToNew[i + 1] == -1 && newToOld[j + 1] == -1 {
+                if old[i + 1] == new[j + 1] {
+                    oldToNew[i + 1] = j + 1
+                    newToOld[j + 1] = i + 1
+                }
+            }
+            i += 1
+        }
+
+        // Pass 5: scan backward to extend matches
+        i = old.count - 1
+        while i > 0 {
+            let j = oldToNew[i]
+            if j >= 0 && j - 1 >= 0 && oldToNew[i - 1] == -1 && newToOld[j - 1] == -1 {
+                if old[i - 1] == new[j - 1] {
+                    oldToNew[i - 1] = j - 1
+                    newToOld[j - 1] = i - 1
+                }
+            }
+            i -= 1
+        }
+
+        // Build results
+        var deletes = IndexSet()
+        for (index, mapped) in oldToNew.enumerated() where mapped == -1 {
+            deletes.insert(index)
+        }
+
+        var inserts = IndexSet()
+        for (index, mapped) in newToOld.enumerated() where mapped == -1 {
+            inserts.insert(index)
+        }
+
+        var matches: [Int: Int] = [:]
+        var moves: [(from: Int, to: Int)] = []
+        for (oldIndex, newIndex) in oldToNew.enumerated() where newIndex >= 0 {
+            matches[oldIndex] = newIndex
+            if oldIndex != newIndex {
+                moves.append((from: oldIndex, to: newIndex))
+            }
+        }
+
+        return Result(deletes: deletes, inserts: inserts, matches: matches, moves: moves)
+    }
 }
 
 extension Collection {
