@@ -23,6 +23,10 @@ extension StructureController {
             if !indexSet.isEmpty {
                 tableView.reloadSections(indexSet, with: .none)
             }
+
+            if !diff.rowsToReload.isEmpty {
+                tableView.reloadRows(at: diff.rowsToReload, with: animation.reload)
+            }
         })
         
         tableView.beginUpdates()
@@ -49,10 +53,6 @@ extension StructureController {
         
         if !diff.rowsToInsert.isEmpty {
             tableView.insertRows(at: diff.rowsToInsert, with: animation.insert)
-        }
-        
-        if !diff.rowsToReload.isEmpty {
-            tableView.reloadRows(at: diff.rowsToReload, with: animation.reload)
         }
         
         tableView.endUpdates()
