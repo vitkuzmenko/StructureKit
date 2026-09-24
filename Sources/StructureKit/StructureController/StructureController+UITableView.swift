@@ -43,7 +43,9 @@ extension StructureController {
             tableView.insertSections(diff.sectionsToInsert, with: animation.insert)
         }
         
-        for movement in diff.rowsToMove.filter({ !diff.rowsToReload.contains($0.to) }) {
+        // Content reloads are applied after this batch in the transaction completion,
+        // so rows that both move and reload must still be moved here.
+        for movement in diff.rowsToMove {
             tableView.moveRow(at: movement.from, to: movement.to)
         }
         
